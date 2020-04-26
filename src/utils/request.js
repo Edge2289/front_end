@@ -1,7 +1,8 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { Notification, MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getToken, setToken } from '@/utils/auth'
+import { encrypt, decrypt } from '@/common/encryption/crypto.js'
 
 // create an axios instance
 const service = axios.create({
@@ -14,12 +15,15 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
+    config.headers = {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
 
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+      config.headers['Authorization'] = 'Bearer ' + getToken()
     }
     return config
   },
@@ -43,32 +47,41 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    const res = response.data
+    const code = response.data.code
 
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    // 保存Token
+    if (response.headers.authorization !== undefined) {
+      const token = response.headers.authorization.substr(7)
+      setToken(token)
+    }
+    if (code === 401) {
+      MessageBox.confirm(
+        '登录状态已过期，您可以继续留在该页面，或者重新登录',
+        '系统提示',
+        {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        store.dispatch('user/resetToken').then(() => {
+          location.reload() // 为了重新实例化vue-router对象 避免bug
+        })
+      })
+      return false
+    } else if (code === 400) {
       Message({
-        message: res.message || 'Error',
+        message: response.data.msg,
         type: 'error',
         duration: 5 * 1000
       })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
+    } else if (code !== 200) {
+      Notification.error({
+        title: response.data.msg
+      })
+      return Promise.reject('error')
     } else {
-      return res
+      return response.data
     }
   },
   error => {

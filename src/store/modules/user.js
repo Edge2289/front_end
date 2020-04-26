@@ -1,5 +1,7 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { logout, getInfo } from '@/api/user'
+import { login } from '@/api/common/login'
+import { getToken, setToken, removeToken, setUserData } from '@/utils/auth'
+import { encrypt, decrypt } from '@/common/encryption/crypto.js'
 import router, { resetRouter } from '@/router'
 
 const state = {
@@ -31,13 +33,28 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { username, password, uuid, code } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({
+        user_name: username.trim(),
+        pwd: password,
+        code: code,
+        uuid: uuid
+      }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
+        /**
+         * 存储一些加密数据
+         * 菜单数据
+         * 用户数据
+         */
+        setUserData(data)
+
+        commit('SET_ROLES', ['admin'])
+        commit('SET_NAME', data.LoginName)
+        commit('SET_AVATAR', data.Name)
+        commit('SET_INTRODUCTION', data.LoginName)
+
+        resolve(data)
       }).catch(error => {
         reject(error)
       })
@@ -46,29 +63,18 @@ const actions = {
 
   // get user info
   getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
+    return new Promise((resolve) => {
+      data = sessionStorage.getItem('user_data')
+      // data = decrypt(sessionStorage.getItem("user_data"))
+      console.log('data', data)
+      console.log(JSON.parse(data))
 
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { roles, name, avatar, introduction } = data
-
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
-        }
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
+      // 这些是系统需要用的数据
+      commit('SET_ROLES', ['admin'])
+      commit('SET_NAME', data.LoginName)
+      commit('SET_AVATAR', data.Name)
+      commit('SET_INTRODUCTION', data.LoginName)
+      resolve(data)
     })
   },
 

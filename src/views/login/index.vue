@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">OSS 后台登录 V1.0</h3>
+        <h3 class="title">后台登录 V1.0</h3>
       </div>
 
       <el-form-item prop="username">
@@ -45,21 +45,38 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-form-item prop="code" style="width: 60%;float: left;">
+        <span class="svg-container">
+          <svg-icon icon-class="validCode" />
+        </span>
+        <el-input
+          ref="username"
+          v-model="loginForm.code"
+          placeholder="验证码"
+          name="username"
+          type="text"
+          tabindex="3"
+          autocomplete="off"
+          style=" width: 75%;"
+          @keyup.enter.native="handleLogin"
+        />
+      </el-form-item>
+      <div class="login-code" style=" width: 38%;height: 48px;float: right;">
+        <img style="height: 48px;width: 100%;" :src="codeUrl" @click="getCode">
+      </div>
+
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
+        <span v-if="!loading">登 录</span>
+        <span v-else>登 录 中...</span>
+      </el-button>
 
     </el-form>
-
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
   </div>
 </template>
 
 <script>
+
+import { getCodeImg } from '@/api/common/login'
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
 
@@ -67,33 +84,22 @@ export default {
   name: 'Login',
   components: { SocialSign },
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
-    }
     return {
+      codeUrl: '',
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '1131191695@qq.com',
+        password: '123456',
+        uuid: '', // 验证码归属id
+        code: '' // 验证码
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        username: [{ required: true, trigger: 'blur', validator: '请输入账号！' }],
+        password: [{ required: true, trigger: 'blur', validator: '请输入密码！' }],
+        code: [{ required: true, trigger: 'change', validator: '验证码不能为空' }]
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
-      showDialog: false,
       redirect: undefined,
       otherQuery: {}
     }
@@ -111,6 +117,7 @@ export default {
     }
   },
   created() {
+    this.getCode() // 页面加载就调用请求一下验证码
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
@@ -138,6 +145,13 @@ export default {
         this.$refs.password.focus()
       })
     },
+    // 请求获取验证码
+    getCode() {
+      getCodeImg().then(res => {
+        this.codeUrl = res.data.data
+        this.loginForm.uuid = res.data.id
+      })
+    },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
@@ -148,10 +162,10 @@ export default {
               this.loading = false
             })
             .catch(() => {
+              this.getCode()
               this.loading = false
             })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -164,24 +178,6 @@ export default {
         return acc
       }, {})
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 }
 </script>
@@ -243,6 +239,9 @@ $light_gray:#eee;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
+  background: url("./images/7269684952DCC453144A41F37F91E3DF.jpg") no-repeat center center;
+   background-size:cover;
+   background-attachment:fixed;
 
   .login-form {
     position: relative;
