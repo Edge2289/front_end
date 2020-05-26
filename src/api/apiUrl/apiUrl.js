@@ -7,5 +7,5 @@ export const ApiUrl = {
   getImgsGroup: 'api/blog/v1/imgGroup', // 获取图片分组
   delImgsGroup: 'api/blog/v1/imgGroup', // 获取图片分组
   updateImgsGroup: 'api/blog/v1/imgGroup', // 获取图片分组
-  addImgsGroup: 'api/blog/v1/imgGroup', // 获取图片分组
+  addImgsGroup: 'api/blog/v1/imgGroup' // 获取图片分组
 }

@@ -70,22 +70,18 @@
         <span v-else>登 录 中...</span>
       </el-button>
 
-
-
-<el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button>
-<ImgLibrary 
-:dialogVisible = dialogVisible
-@changeDialogVisible="changeDialogVisible"
->
-</ImgLibrary>
+      <el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button>
+      <ImgLibrary
+        :dialog-visible="dialogVisible"
+        @changeDialogVisible="changeDialogVisible"
+      />
 
     </el-form>
   </div>
 </template>
 
-
 <script>
-import './directives.js';
+import './directives.js'
 import { getCodeImg } from '@/api/common/login'
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
@@ -146,8 +142,8 @@ export default {
   },
   methods: {
     changeDialogVisible(val) {
-        this.dialogVisible = false
-        console.log(val)
+      this.dialogVisible = false
+      console.log(val)
     },
     checkCapslock(e) {
       const { key } = e
