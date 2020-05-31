@@ -1,0 +1,86 @@
+.img_menu_xuanzhong {
+    background: rgba(48, 145, 242, 0.1);
+    border-radius: 6px;
+    color: #0e90d2;
+  }
+
+  .img_menu {
+    padding-left: 0px;
+  }
+
+  .img_menu div {
+    padding: 3px;
+    padding-left: 20px;
+    margin-top: 3px; 
+  }
+
+  .block {
+    float: left;
+    margin-bottom: 2px;
+    position: relative;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+  .img-paixun:hover {
+    border: 1px solid #16bce2; 
+  }
+  .img-paixun {
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: All 0.2s ease-in-out;
+  }
+
+  .el-dialog__body {
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .el-header {
+    height: 32px;
+    line-height: 36px;
+  }
+
+  .el-aside {
+    color: #333;
+  }
+  .action .select-mask{
+    display: block;
+  }
+  .select-mask {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    border-radius: 6px;
+    margin: 2px;
+  }
+  .select-mask img{
+    position: absolute;
+    top: 50px;
+    left: 45px;
+  }
+  .groupTextHidden {
+    display: none;
+  }
+  .groupField .groupTextHidden {
+    display: block;
+  }
+  .img_menu_xuanzhong a{
+    color: #0e90d2;
+  }
+  .pageClass {
+    width: 32px; 
+    height: 26px;
+    border-radius: 5px;
+    border: 1px solid rgb(202, 202, 202);
+    float: right;
+    margin-left: 20px;
+    cursor: pointer;
+  }
