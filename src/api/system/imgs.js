@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 import { ApiUrl } from '@/api/apiUrl/apiUrl'
 
-
 /**
  * 上传图片
  */

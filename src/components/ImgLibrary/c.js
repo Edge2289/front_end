@@ -1,13 +1,15 @@
-import {
-    uploadImg,
+
+  import {
     getImgs,
+    getGroupText,
+    updateGroupText,
+    addGroupText,
     delImgs,
-    mvImgs,
-    getImgsGroup,
-    updateImgsGroup,
-    addImgsGroup,
-    delImgsGroup
+    delGroupText,
+    uploadImg,
+    mvImgs
   } from "@/api/system/imgs";
+  import { Notification } from 'element-ui';
 
   export default {
     name: "ImgLibrary",
@@ -75,9 +77,9 @@ import {
       },
       // 获取分组
       getGroupText() {
-        getImgsGroup().then(res => {
-          console.log("getGroupText", res);
-        });
+        // getGroupText().then(res => {
+        //   console.log("getGroupText", res);
+        // });
       },
 
       /**
@@ -102,11 +104,6 @@ import {
           console.log("为空00")
         }
         this.innerVisible = false
-        addImgsGroup({
-
-        }).then(res => {
-
-        })
       },
       // 选中分组
       selectGroup(id) {
@@ -115,28 +112,17 @@ import {
          * 请求图片分组数据
          */
       },
-      // 修改图片
+      // 上传图片
       editGroupText(item) {
         // 编辑分组名字
         this.GroupTextTitle = "编辑分组信息";
         this.newEditGroupText = item.name;
         this.innerVisible = true;
-
-        updateImgsGroup({
-
-        }).then(res => {
-
-        })
         console.log(item);
       },
       delGroupText(item) {
         // 删除分组名字
         console.log(item);
-        delImgsGroup({
-            
-        }).then(res => {
-
-        })
       },
       // 分组特效  STAST
       changeActive($event) {
@@ -270,11 +256,6 @@ import {
           this.alertEmptyImgs()
           return
         }
-        delImgs({
-
-        }).then(res => {
-
-        })
         console.log("删除图片",  this.selectedImgs)
       },
       // 移动分组
@@ -284,13 +265,8 @@ import {
           this.alertEmptyImgs()
           return
         }
-        // 移动图片分组
-        mvImgs({
-            "cate_id" : groupId,
-            "imgs" : this.selectedImgs
-        }).then(res => {
-
-        })
+          console.log("groupId", command)
+          console.log("this.selectedImgs", this.selectedImgs)
       },
       alertEmptyImgs(text){
         // 选中图片为空弹窗

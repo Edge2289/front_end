@@ -89,7 +89,7 @@
   </el-dialog>
 </template>
 
-<script src="./index.js"></script>
+<script src="./c.js"></script>
 <style scoped>
     @import './css.css';
 </style>
