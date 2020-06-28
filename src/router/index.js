@@ -9,8 +9,7 @@ import Layout from '@/layout'
 /* Router Modules */
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+import systemRouter from './modules/system'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -120,37 +119,40 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   chartsRouter,
-  nestedRouter,
-  tableRouter,
-
+  systemRouter,
   {
     path: '/example',
     component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
+    redirect: '',
+    name: 'blog',
     meta: {
-      title: 'Example',
+      title: '博客内容',
       icon: 'example'
     },
     children: [
       {
+        path: 'tabList',
+        component: () => import('@/views/example/list'),
+        name: 'tabList',
+        meta: { title: '文章标签', icon: 'tab' }
+      },
+      {
+        path: 'category',
+        component: () => import('@/views/example/list'),
+        name: 'ArticleCategory',
+        meta: { title: '文章分类', icon: 'time-range' }
+      },
+      {
         path: 'create',
         component: () => import('@/views/example/create'),
         name: 'CreateArticle',
-        meta: { title: 'Create Article', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'Edit Article', noCache: true, activeMenu: '/example/list' },
-        hidden: true
+        meta: { title: '新建文章', icon: 'edit' }
       },
       {
         path: 'list',
         component: () => import('@/views/example/list'),
         name: 'ArticleList',
-        meta: { title: 'Article List', icon: 'list' }
+        meta: { title: '文章列表', icon: 'list' }
       }
     ]
   },
@@ -167,7 +169,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
   {
     path: '/menu',
     component: Layout,
