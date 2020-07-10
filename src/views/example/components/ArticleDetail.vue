@@ -16,8 +16,6 @@
 
       <div class="createPost-main-container">
         <el-row>
-          <Warning />
-
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="title">
               <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
@@ -67,9 +65,7 @@
           <Tinymce ref="editor" v-model="postForm.content" :height="400" />
         </el-form-item>
 
-        <el-form-item prop="image_uri" style="margin-bottom: 30px;">
-          <Upload v-model="postForm.image_uri" />
-        </el-form-item>
+
       </div>
     </el-form>
   </div>
@@ -92,7 +88,6 @@ const defaultForm = {
   content: '', // 文章内容
   content_short: '', // 文章摘要
   source_uri: '', // 文章外链
-  image_uri: '', // 文章图片
   display_time: undefined, // 前台展示时间
   id: undefined,
   platforms: ['a-platform'],
@@ -141,7 +136,6 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
