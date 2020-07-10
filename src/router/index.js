@@ -72,14 +72,31 @@ export const constantRoutes = [
   },
   {
     path: '/',
+    name: 'Dashboard',
     component: Layout,
     redirect: '/dashboard',
+    meta: {
+      title: 'Dashboard',
+      icon: 'dashboard'
+    },
     children: [
       {
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '控制面板', icon: 'dashboard', affix: true }
+        meta: { title: '分析页', icon: 'druid', affix: true }
+      },
+      {
+        path: 'monitor',
+        component: () => import('@/views/dashboard/monitor'),
+        name: 'Monitor',
+        meta: { title: '监控页', icon: 'international'}
+      },
+      {
+        path: 'workplace',
+        component: () => import('@/views/dashboard/workplace'),
+        name: 'Workplace',
+        meta: { title: '工作台', icon: 'people' }
       }
     ]
   },

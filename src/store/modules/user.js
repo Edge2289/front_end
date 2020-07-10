@@ -35,29 +35,36 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password, uuid, code } = userInfo
     return new Promise((resolve, reject) => {
-      login({
-        user_name: username.trim(),
-        pwd: password,
-        code: code,
-        uuid: uuid
-      }).then(response => {
-        const { data } = response
-        /**
-         * 存储一些加密数据
-         * 菜单数据
-         * 用户数据
-         */
-        setUserData(data)
+      
+      let data = {
+        "LoginName" : 1,
+        "Name" : 1,
+      }
 
+      // login({
+      //   user_name: username.trim(),
+      //   pwd: password,
+      //   code: code,
+      //   uuid: uuid
+      // }).then(response => {
+      //   const { data } = response
+      //   console.log("data", data)
+      //   /**
+      //    * 存储一些加密数据
+      //    * 菜单数据
+      //    * 用户数据
+      //    */
+        setUserData(data)
+        setToken("阿三的撒打算打算嗒嗒嗒暗示答s6dasdasd")
         commit('SET_ROLES', ['admin'])
         commit('SET_NAME', data.LoginName)
         commit('SET_AVATAR', data.Name)
         commit('SET_INTRODUCTION', data.LoginName)
 
         resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
+      // }).catch(error => {
+      //   reject(error)
+      // })
     })
   },
 
