@@ -8,7 +8,7 @@ const systemRouter = {
   redirect: '',
   name: 'System',
   meta: {
-    title: '系统设置',
+    title: '系统模块',
     icon: 'system'
   },
   children: [
@@ -26,14 +26,14 @@ const systemRouter = {
     },
     {
       path: 'system-configuration',
-      component: () => import('@/views/system/inline-edit-table'),
+      component: () => import('@/views/system/configuration/index'),
       name: 'configuration',
       meta: { title: '第三方配置' }
     },
     {
       path: 'system-website',
-      component: () => import('@/views/system/complex-table'),
-      name: 'Website',
+      component: () => import('@/views/system/website/index'),
+      name: 'website',
       meta: { title: '网站设置' }
     }
   ]

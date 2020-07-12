@@ -175,6 +175,31 @@ export const asyncRoutes = [
   },
 
   {
+    path: '/server',
+    component: Layout,
+    redirect: '',
+    name: 'Server',
+    meta: {
+      title: '系统监控',
+      icon: 'server'
+    },
+    children: [
+      {
+        path: 'monitor',
+        component: () => import('@/views/server/monitor/index'),
+        name: 'monitor',
+        meta: { title: '服务监控', icon: 'server' }
+      },
+      {
+        path: 'apimonitor',
+        component: () => import('@/views/server/monitor/index'),
+        name: 'apimonitor',
+        meta: { title: 'api监控', icon: 'server' }
+      }
+    ]
+  },
+  
+  {
     path: '/tab',
     component: Layout,
     children: [

@@ -88,32 +88,6 @@
       </el-table-column>
     </el-table>
 
-    <el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button>
-
-    <el-dialog
-      title="图片库"
-      :visible.sync="dialogVisible"
-      width="70%"
-      :before-close="handleClose"
-    >
-
-      <el-tabs tab-position="left" style="height: 400px;">
-        <el-tab-pane label="用户管理">
-
-          <el-row :gutter="20" style="height:300px">
-
-            <div class="demo-image__lazy">
-              <el-image v-for="url in urls" :key="url" :src="url" lazy />
-            </div>
-          </el-row>
-
-        </el-tab-pane>
-        <el-tab-pane label="配置管理">配置管理</el-tab-pane>
-        <el-tab-pane label="角色管理">角色管理</el-tab-pane>
-        <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
-      </el-tabs>
-    </el-dialog>
-
     <!-- 添加或修改菜单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
