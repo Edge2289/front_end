@@ -149,7 +149,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'tabList',
-        component: () => import('@/views/example/list'),
+        component: () => import('@/views/example/tabList'),
         name: 'tabList',
         meta: { title: '文章标签', icon: 'tab' }
       },
