@@ -10,6 +10,7 @@
     mvImgs
   } from "@/api/system/imgs";
   import { Notification } from 'element-ui';
+  import { dialogDrag } from '@/utils/directives'
 
   export default {
     name: "ImgLibrary",
