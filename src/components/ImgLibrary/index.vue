@@ -1,6 +1,6 @@
 <template>
   <el-dialog v-dialogDrag title="图片库" :visible.sync="dialogVisible" width="840px" :close-on-click-modal="false" :show-close="false">
-    <el-container style="height: 450px; border: 1px solid #eee;border:none">
+    <el-container style="height: 450px; border: 1px solid #eee;border:none;line-height: 16px;">
       <el-aside class="img_menu" width="150px" style="font-size: 14px;padding: 0px;margin-top: 18px;background: white;">
         <div v-bind:class="{ img_menu_xuanzhong: searchSelectedGroup == -1 }" style="margin-left: 12px;cursor: pointer;" @click="selectGroup(-1)" :id="-1" @mouseover="changeActive($event)" @mouseout="removeActive($event)">全部图片</div>
         <div v-bind:class="{ img_menu_xuanzhong: searchSelectedGroup == 0 }" style="margin-left: 12px;cursor: pointer;" @click="selectGroup(0)" :id="0" @mouseover="changeActive($event)" @mouseout="removeActive($event)">未分组</div>

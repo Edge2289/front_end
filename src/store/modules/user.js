@@ -55,7 +55,7 @@ const actions = {
       //    * 用户数据
       //    */
         setUserData(data)
-        setToken("阿三的撒打算打算嗒嗒嗒暗示答s6dasdasd")
+        setToken("asdasd")
         commit('SET_ROLES', ['admin'])
         commit('SET_NAME', data.LoginName)
         commit('SET_AVATAR', data.Name)

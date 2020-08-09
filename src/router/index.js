@@ -7,7 +7,6 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import systemRouter from './modules/system'
 
@@ -134,7 +133,6 @@ export const asyncRoutes = [
   },
 
   /** when your routing map is too long, you can split it into small modules **/
-  componentsRouter,
   chartsRouter,
   systemRouter,
   {
@@ -155,15 +153,16 @@ export const asyncRoutes = [
       },
       {
         path: 'category',
-        component: () => import('@/views/example/list'),
+        component: () => import('@/views/example/cateList/list'),
         name: 'ArticleCategory',
         meta: { title: '文章分类', icon: 'time-range' }
       },
       {
-        path: 'create',
+        path: 'articleEdit',
         component: () => import('@/views/example/create'),
+        hidden: true,
         name: 'CreateArticle',
-        meta: { title: '新建文章', icon: 'edit' }
+        meta: { title: '文章编辑', icon: 'edit' }
       },
       {
         path: 'list',
@@ -195,19 +194,6 @@ export const asyncRoutes = [
         component: () => import('@/views/server/monitor/index'),
         name: 'apimonitor',
         meta: { title: 'api监控', icon: 'server' }
-      }
-    ]
-  },
-  
-  {
-    path: '/tab',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'Tab', icon: 'tab' }
       }
     ]
   },
