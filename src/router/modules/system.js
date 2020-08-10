@@ -20,7 +20,7 @@ const systemRouter = {
     },
     {
       path: 'system-secretKeyList',
-      component: () => import('@/views/system/secretKeyList/index'),
+      component: () => import('@/views/system/secretkeylist/index'),
       name: 'secretKeyList',
       meta: { title: '秘钥列表' }
     },

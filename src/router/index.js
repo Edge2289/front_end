@@ -7,7 +7,6 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import chartsRouter from './modules/charts'
 import systemRouter from './modules/system'
 
 /**
@@ -133,7 +132,6 @@ export const asyncRoutes = [
   },
 
   /** when your routing map is too long, you can split it into small modules **/
-  chartsRouter,
   systemRouter,
   {
     path: '/example',
@@ -172,7 +170,45 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  {
+    path: '/seo',
+    component: Layout,
+    redirect: '',
+    name: 'SEO',
+    meta: {
+      title: 'SEO',
+      icon: 'nested'
+    },
+    children: [
+      {
+        path: '/blog_seo',
+        component: () => import('@/views/seo/blog_seo/index'),
+        name: 'BlogSeo',
+        redirect: '/seo/blog_seo/index',
+        meta: { title: '博客SEO'},
+        children: [
+          {
+            path: 'baidu_seo',
+            component: () => import('@/views/seo/blog_seo/baidu_seo/index'),
+            name: 'BaiduSeo',
+            meta: { title: '百度SEO', icon: 'list' }
+          },
+          {
+            path: 'xiongzhang_seo',
+            component: () => import('@/views/seo/blog_seo/xiongzhang_seo/index'),
+            name: 'XiongZhangSeo',
+            meta: { title: '熊掌SEO', icon: 'list' }
+          }
+        ]
+      },
+      {
+        path: 'lists',
+        component: () => import('@/views/example/list'),
+        name: 'ArticleListX',
+        meta: { title: '文章列表sds', icon: 'list' }
+      }
+    ]
+  },
   {
     path: '/server',
     component: Layout,
@@ -194,18 +230,6 @@ export const asyncRoutes = [
         component: () => import('@/views/server/monitor/index'),
         name: 'apimonitor',
         meta: { title: 'api监控', icon: 'server' }
-      }
-    ]
-  },
-  {
-    path: '/menu',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/menu/index'),
-        name: 'menuTab',
-        meta: { title: 'menu', icon: 'tab' }
       }
     ]
   },
