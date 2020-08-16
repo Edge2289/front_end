@@ -3,7 +3,7 @@
     <el-form ref="queryForm" :model="queryParams" :inline="true">
       <el-form-item label="标签名称" prop="roleName">
         <el-input
-          v-model="queryParams.roleName"
+          v-model="queryParams.label"
           placeholder="请输入标签名称"
           clearable
           size="small"
@@ -13,9 +13,9 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select
-          v-model="queryParams.status"
+          v-model="queryParams.is_state"
           placeholder="标签状态"
-          clearable
+          clearableis_state
           size="small"
           style="width: 240px"
         >
@@ -26,18 +26,6 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateRange"
-          size="small"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -118,13 +106,13 @@
       </el-table-column>
     </el-table>
 
-    <!-- <pagination
+    <pagination
       v-show="total>0"
       :total="total"
-      :page.sync="queryParams.pageIndex"
-      :limit.sync="queryParams.pageSize"
+      :page.sync="queryParams.page"
+      :limit.sync="queryParams.page_size"
       @pagination="getList"
-    /> -->
+    />
 
     <!-- 添加或修改标签配置对话框 -->
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
@@ -159,10 +147,7 @@
 </template>
 
 <script>
-// import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from '@/api/system/role'
-// import { treeselect as menuTreeselect, roleMenuTreeselect } from '@/api/system/menu'
-// import { treeselect as deptTreeselect, roleDeptTreeselect } from '@/api/system/dept'
-// import { formatJson } from '@/utils'
+import { getLabel, putLabel, addLabel, delLabel} from '@/api/article/article'
 import { dialogDrag } from '@/utils/directives'
 
 export default {
@@ -198,40 +183,16 @@ export default {
             'dictValue': 0,
             'dictLabel': "关闭"
         }],
-      // 数据范围选项
-      dataScopeOptions: [
-        {
-          value: '1',
-          label: '全部数据权限'
-        },
-        {
-          value: '2',
-          label: '自定数据权限'
-        },
-        {
-          value: '3',
-          label: '本部门数据权限'
-        },
-        {
-          value: '4',
-          label: '本部门及以下数据权限'
-        },
-        {
-          value: '5',
-          label: '仅本人数据权限'
-        }
-      ],
       // 菜单列表
       menuOptions: [],
       // 部门列表
       deptOptions: [],
       // 查询参数
       queryParams: {
-        pageIndex: 1,
-        pageSize: 10,
-        roleName: undefined,
-        roleKey: undefined,
-        status: undefined
+        page: 1,
+        page_size: 10,
+        label: "",
+        is_state: 0,
       },
       // 表单参数
       form: {},
@@ -259,22 +220,25 @@ export default {
   methods: {
     /** 查询标签列表 */
     getList() {
-        this.tab_list = [
-          {"tab_id":1, "tab_name": "天蓝色", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":2, "tab_name": "天蓝色aa", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":3, "tab_name": "天蓝色ss", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":4, "tab_name": "天蓝色dd", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-          
-        ]
-        this.total = 10
-    //   this.loading = true
-    //   listRole(this.addDateRange(this.queryParams, this.dateRange)).then(
-    //     response => {
-    //       this.tab_list = response.data.list
-    //       this.total = response.data.count
-    //       this.loading = false
-    //     }
-    //   )
+      this.loading = true
+      getLabel(this.queryParams).then(
+        response => {
+          this.loading = false;
+          this.total = response.data.count;
+          let tab_list = [];
+          response.data.list.forEach((item, index) => {
+              tab_list[index] = {
+                "tab_id": item.id, 
+                "tab_name": item.label, 
+                "tab_color": item.color, 
+                "is_state": item.is_state, 
+                "operator_name": item.OperatorName, 
+                "created_at": item.createTime
+                };
+          }
+        )
+        this.tab_list = tab_list;
+      })
     },
     /** 查询部门树结构 */
     getDeptTreeselect() {
@@ -327,13 +291,15 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageIndex = 1
+      this.queryParams.page = 1
       this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = []
-    //   this.resetForm('queryForm')
+      this.queryParams.page = 1;
+      this.queryParams.page_size = 10;
+      this.queryParams.label = '';
+      this.queryParams.is_state = '';
       this.handleQuery()
     },
     // 多选框选中数据

@@ -149,13 +149,13 @@
           </el-table-column>
         </el-table>
 
-        <!-- <pagination
+        <pagination
           v-show="total>0"
           :total="total"
           :page.sync="queryParams.pageIndex"
           :limit.sync="queryParams.pageSize"
           @pagination="getList"
-        /> -->
+        />
       </el-col>
     </el-row>
 
@@ -163,9 +163,8 @@
 </template>
 
 <script>
-// import { listUser, getUser, delUser, addUser, updateUser, exportUser, resetUserPwd, changeUserStatus, importTemplate, getUserInit } from '@/api/system/sysuser'
+import { getArticleList, getUdelArticleser, updateArticle, addArticle, getLabel} from '@/api/article/article'
 import { getToken } from '@/utils/auth'
-// import { treeselect } from '@/api/system/dept'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
@@ -208,10 +207,6 @@ export default {
         }],
       // 分类名称
       cateName: undefined,
-      // 默认密码
-      initPassword: undefined,
-      // 日期范围
-      dateRange: [],
       // 状态数据字典
       statusOptions: [{
             'dictValue': 1,
@@ -244,7 +239,7 @@ export default {
     }
   },
   created() {
-    // this.getList()
+    this.getList()
     // this.getTreeselect()
     // this.getDicts('sys_normal_disable').then(response => {
     //   this.statusOptions = response.data
@@ -257,19 +252,21 @@ export default {
     // })
   },
   methods: {
-      handleNodeClick(data) {
-        console.log(data);
-      },
+    handleNodeClick(data) {
+      console.log(data);
+    },
     /** 查询用户列表 */
-    // getList() {
-    //   this.loading = true
-    //   listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-    //     this.userList = response.data.list
-    //     this.total = response.data.count
-    //     this.loading = false
-    //   }
-    //   )
-    // },
+    getList() {
+      // this.loading = true
+      getArticleList([]).then(
+        response => {
+          // this.userList = response.data.list
+          // this.total = response.data.count
+          // this.loading = false
+          console.log("response.data", response.data);
+        }
+      )
+    },
     /** 查询部门下拉树结构 */
     getTreeselect() {
       treeselect().then(response => {
@@ -283,7 +280,7 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.loading = true
+      // this.loading = true
       // this.queryParams.deptId = data.deptId
       // this.getList()
     },
@@ -330,7 +327,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       // this.queryParams.page = 1
-      // this.getList()
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {

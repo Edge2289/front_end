@@ -14,4 +14,20 @@ export const ApiUrl = {
   searchImgs: 'api/blog/uploadIms', // 搜索图片
   mvImgs: 'api/blog/uploadIms', // 移动图片到新分组
   delImgs: 'api/blog/uploadIms', // 删除图片
+
+  // 文章
+  getArticleApi: 'api/blog/v1/article/list', // 獲取文章
+  delArticleApi: 'api/blog/v1/article/del', // 獲取文章
+  updateArticleApi: 'api/blog/v1/article/put', // 獲取文章
+  addArticleApi: 'api/blog/v1/article/add', // 獲取文章
+
+  // 文章分類
+  getCate: 'api/blog/v1/article/cate', // 獲取文章
+  delCate: 'api/blog/v1/article/cate', // 獲取文章
+  updateCate: 'api/blog/v1/article/cate', // 獲取文章
+  addCate: 'api/blog/v1/article/cate', // 獲取文章
+
+  // 文章label分類
+  getLabel: 'api/blog/v1/article/label', // 獲取文章
+  
 }

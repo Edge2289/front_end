@@ -80,15 +80,17 @@
         >导出</el-button>
       </el-col>
     </el-row>
-
+    <br>
     <el-table v-loading="loading" :data="tab_list" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="tab_id" />
-      <el-table-column label="标签名称" prop="tab_name" width="120" />
-      <el-table-column label="标签颜色" prop="tab_color" :show-overflow-tooltip="true" width="150" />
+      <el-table-column type="selection" width="55" align="id" />
+      <el-table-column label="应用名称" prop="app_name" width="120" />
+      <el-table-column label="app_id" prop="app_id" width="120" />
+      <el-table-column label="秘钥" prop="app_secret" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="应用描述" prop="app_desc" :show-overflow-tooltip="true" width="150" />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
-            v-model="scope.row.is_state"
+            v-model="scope.row.status"
             active-value="0"
             inactive-value="1"
             @change="handleStatusChange(scope.row)"
@@ -126,18 +128,21 @@
       @pagination="getList"
     /> -->
 
-    <!-- 添加或修改标签配置对话框 -->
+    <!-- 添加或修改密钥配置对话框 -->
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="标签名称" prop="tab_name">
-          <el-input v-model="form.roleName" placeholder="请输入标签名称" :disabled="isEdit" />
+        <el-form-item label="密钥名称" prop="app_name">
+          <el-input v-model="form.app_name" placeholder="请输入密钥名称" />
         </el-form-item>
-        <el-form-item label="标签颜色" prop="roleKey">
+        <el-form-item label="app_id" prop="app_id">
           <!-- <el-input v-model="form.roleKey" placeholder="请输入权限字符" :disabled="isEdit" /> -->
-          <el-color-picker v-model="form.tab_color" size="medium"></el-color-picker>
+          <el-input v-model="form.app_id" placeholder="自动生成,请勿填写" :disabled="true" />
         </el-form-item>
-        <el-form-item label="标签顺序" prop="roleSort">
-          <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
+        <el-form-item label="secret" prop="app_secret">
+          <el-input v-model="form.app_secret" placeholder="自动生成,请勿填写" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="描述" prop="app_desc">
+          <el-input v-model="form.app_desc" placeholder="请输入密钥名称"/>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -154,6 +159,28 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+
+    <!-- 分页 -->
+    <!-- <div style="margin-top: 20px;text-align: center;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        background
+        :page-sizes="[100, 200, 300, 400]"
+        :page-size="100"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+    </div> -->
+    
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="queryParams.pageIndex"
+      :limit.sync="queryParams.pageSize"
+      @pagination="getList"
+    />
 
   </div>
 </template>
@@ -178,8 +205,8 @@ export default {
       // 非多个禁用
       multiple: true,
       // 总条数
-      total: 0,
-      // 标签表格数据
+      total: 100,
+      // 密钥表格数据
       tab_list: [],
       // 弹出层标题
       title: '',
@@ -187,7 +214,6 @@ export default {
       open: false,
       // 是否显示弹出层（数据权限）
       openDataScope: false,
-      isEdit: false,
       // 日期范围
       dateRange: [],
       // 状态数据字典
@@ -198,29 +224,6 @@ export default {
             'dictValue': 0,
             'dictLabel': "关闭"
         }],
-      // 数据范围选项
-      dataScopeOptions: [
-        {
-          value: '1',
-          label: '全部数据权限'
-        },
-        {
-          value: '2',
-          label: '自定数据权限'
-        },
-        {
-          value: '3',
-          label: '本部门数据权限'
-        },
-        {
-          value: '4',
-          label: '本部门及以下数据权限'
-        },
-        {
-          value: '5',
-          label: '仅本人数据权限'
-        }
-      ],
       // 菜单列表
       menuOptions: [],
       // 部门列表
@@ -234,21 +237,20 @@ export default {
         status: undefined
       },
       // 表单参数
-      form: {},
+      form: {
+        status: 1,
+      },
       defaultProps: {
         children: 'children',
         label: 'label'
       },
       // 表单校验
       rules: {
-        roleName: [
-          { required: true, message: '标签名称不能为空', trigger: 'blur' }
+        app_name: [
+          { required: true, message: '密钥名称不能为空', trigger: 'blur' }
         ],
-        roleKey: [
-          { required: true, message: '权限字符不能为空', trigger: 'blur' }
-        ],
-        roleSort: [
-          { required: true, message: '标签顺序不能为空', trigger: 'blur' }
+        app_desc: [
+          { required: true, message: '应用描述', trigger: 'blur' }
         ]
       }
     }
@@ -257,13 +259,13 @@ export default {
     this.getList()
   },
   methods: {
-    /** 查询标签列表 */
+    /** 查询密钥列表 */
     getList() {
         this.tab_list = [
-          {"tab_id":1, "tab_name": "天蓝色", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":2, "tab_name": "天蓝色aa", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":3, "tab_name": "天蓝色ss", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":4, "tab_name": "天蓝色dd", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
+         {"id":1, "app_name": "天蓝色", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
+         {"id":2, "app_name": "天蓝色aa", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
+         {"id":3, "app_name": "天蓝色ss", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
+         {"id":4, "app_name": "天蓝色dd", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
           
         ]
         this.total = 10
@@ -282,20 +284,26 @@ export default {
         this.deptOptions = response.data.list
       })
     },
-    // 标签状态修改
+    handleSizeChange() {
+      console.log("handleSizeChange", "handleSizeChange");
+    },
+    handleCurrentChange() {
+      console.log("handleCurrentChange", "handleCurrentChange");
+    },
+    // 密钥状态修改
     handleStatusChange(row) {
-      const text = row.is_state === '0' ? '启用' : '停用'
-      console.log("row.is_state", row.is_state)
-      this.$confirm('确认要"' + text + '""' + row.tab_name + '"标签吗?', '警告', {
+      const text = row.status === '0' ? '启用' : '停用'
+      console.log("row.status", row.status)
+      this.$confirm('确认要"' + text + '""' + row.app_name + '"密钥吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(function() {
-        return changeRoleStatus(row.tab_id, row.is_state)
+        return changeRoleStatus(row.id, row.status)
       }).then(() => {
         this.msgSuccess(text + '成功')
       }).catch(function() {
-        row.is_state = row.is_state === '0' ? '1' : '0'
+        row.status = row.status === '0' ? '1' : '0'
       })
     },
     // 取消按钮
@@ -346,8 +354,7 @@ export default {
     handleAdd() {
       this.reset()
       this.open = true
-      this.title = '添加标签'
-      this.isEdit = false
+      this.title = '添加密钥'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -356,8 +363,7 @@ export default {
     //   getRole(roleId).then(response => {
     //     this.form = response.data
         this.open = true
-        this.title = '修改标签'
-        this.isEdit = true
+        this.title = '修改密钥'
     //   })
     },
     /** 提交按钮 */
@@ -409,7 +415,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const tab_ids = row.tab_id || this.ids
-      this.$confirm('是否确认删除标签: ' + row.tab_name + ' ?', '警告', {
+      this.$confirm('是否确认删除密钥: ' + row.tab_name + ' ?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -422,21 +428,21 @@ export default {
     },
     /** 导出按钮操作 */
     // handleExport() {
-    //   this.$confirm('是否确认导出所有标签数据项?', '警告', {
+    //   this.$confirm('是否确认导出所有密钥数据项?', '警告', {
     //     confirmButtonText: '确定',
     //     cancelButtonText: '取消',
     //     type: 'warning'
     //   }).then(() => {
     //     this.downloadLoading = true
     //     import('@/vendor/Export2Excel').then(excel => {
-    //       const tHeader = ['标签编号', '标签名称', '权限字符', '显示顺序', '状态', '创建时间']
+    //       const tHeader = ['密钥编号', '密钥名称', '权限字符', '显示顺序', '状态', '创建时间']
     //       const filterVal = ['roleId', 'roleName', 'roleKey', 'roleSort', 'status', 'createdAt']
     //       const list = this.tab_list
     //       const data = formatJson(filterVal, list)
     //       excel.export_json_to_excel({
     //         header: tHeader,
     //         data,
-    //         filename: '标签管理',
+    //         filename: '密钥管理',
     //         autoWidth: true, // Optional
     //         bookType: 'xlsx' // Optional
     //       })

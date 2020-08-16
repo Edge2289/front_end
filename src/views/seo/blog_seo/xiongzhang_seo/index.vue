@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    大师傅士大夫谢谢  擦撒大苏打撒撒旦阿松大飒飒的是的
+    待完善
   </div>
 </template>
 

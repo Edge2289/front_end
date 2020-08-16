@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form ref="queryForm" :model="queryParams" :inline="true">
-      <el-form-item label="分类名称" prop="roleName">
+      <el-form-item label="分类名称" prop="name">
         <el-input
-          v-model="queryParams.roleName"
+          v-model="queryParams.name"
           placeholder="请输入分类名称"
           clearable
           size="small"
@@ -11,9 +11,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item label="状态" prop="is_state">
         <el-select
-          v-model="queryParams.status"
+          v-model="queryParams.is_state"
           placeholder="分类状态"
           clearable
           size="small"
@@ -26,18 +26,6 @@
             :value="dict.dictValue"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateRange"
-          size="small"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery" plain>搜索</el-button>
@@ -77,6 +65,7 @@
     <el-table v-loading="loading" :data="tab_list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="tab_id" />
       <el-table-column label="分类名称" prop="tab_name" width="120" />
+      <el-table-column label="分类備注" prop="tab_note" width="280" />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -110,27 +99,48 @@
       </el-table-column>
     </el-table>
 
-    <!-- <pagination
+    <pagination
       v-show="total>0"
       :total="total"
-      :page.sync="queryParams.pageIndex"
-      :limit.sync="queryParams.pageSize"
+      :page.sync="queryParams.page"
+      :limit.sync="queryParams.page_size"
       @pagination="getList"
-    /> -->
+    />
 
     <!-- 添加或修改标签配置对话框 -->
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="分类名称" prop="tab_name">
-          <el-input v-model="form.roleName" placeholder="请输入分类名称" :disabled="isEdit" />
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="分类名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入分类名称"/>
+        </el-form-item>
+        <el-form-item label="分类備注" prop="note">
+          <el-input v-model="form.note" placeholder="请输入分类備注" />
+        </el-form-item>
+        <el-form-item label="權重" prop="sort">
+          <el-input v-model="form.sort" placeholder="请输入權重"/>
         </el-form-item>
         <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
+          <el-radio-group v-model="form.is_state">
             <el-radio
-              v-for="dict in statusOptions"
-              :key="dict.dictValue"
-              :label="dict.dictValue"
-            >{{ dict.dictLabel }}</el-radio>
+              :key="1"
+              :label="1"
+            >開啓</el-radio>
+            <el-radio
+              :key="0"
+              :label="0"
+            >關閉</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="首頁顯示">
+          <el-radio-group v-model="form.is_home">
+            <el-radio
+              :key="1"
+              :label="1"
+            >開啓</el-radio>
+            <el-radio
+              :key="0"
+              :label="0"
+            >關閉</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -144,11 +154,12 @@
 </template>
 
 <script>
-// import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus } from '@/api/system/role'
+import { getCategory, putCategory, addCategory, delCategory} from '@/api/article/category'
 // import { treeselect as menuTreeselect, roleMenuTreeselect } from '@/api/system/menu'
 // import { treeselect as deptTreeselect, roleDeptTreeselect } from '@/api/system/dept'
 // import { formatJson } from '@/utils'
 import { dialogDrag } from '@/utils/directives'
+import { updateArticle } from '@/api/article'
 
 export default {
   name: 'Role',
@@ -170,52 +181,35 @@ export default {
       title: '',
       // 是否显示弹出层
       open: false,
-      // 是否显示弹出层（数据权限）
-      openDataScope: false,
       isEdit: false,
       // 日期范围
       dateRange: [],
       // 状态数据字典
       statusOptions: [{
+            'dictValue': -1,
+            'dictLabel': "全部"
+        },{
             'dictValue': 1,
             'dictLabel': "开启"
         },{
             'dictValue': 0,
             'dictLabel': "关闭"
         }],
-      // 数据范围选项
-      dataScopeOptions: [
-        {
-          value: '1',
-          label: '全部数据权限'
-        },
-        {
-          value: '2',
-          label: '自定数据权限'
-        },
-        {
-          value: '3',
-          label: '本部门数据权限'
-        },
-        {
-          value: '4',
-          label: '本部门及以下数据权限'
-        },
-        {
-          value: '5',
-          label: '仅本人数据权限'
-        }
-      ],
       // 查询参数
       queryParams: {
-        pageIndex: 1,
-        pageSize: 10,
-        roleName: undefined,
-        roleKey: undefined,
-        status: 1
+        page: 1,
+        page_size: 10,
+        name: undefined,
+        is_state: -1,
       },
       // 表单参数
-      form: {},
+      form: {
+        is_state: 1,
+        is_home: 1,
+        name: '',
+        note: '',
+        sort: 50
+      },
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -240,22 +234,26 @@ export default {
   methods: {
     /** 查询标签列表 */
     getList() {
-        this.tab_list = [
-          {"tab_id":1, "tab_name": "天蓝色", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":2, "tab_name": "天蓝色aa", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":3, "tab_name": "天蓝色ss", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":4, "tab_name": "天蓝色dd", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-          
-        ]
-        this.total = 10
-    //   this.loading = true
-    //   listRole(this.addDateRange(this.queryParams, this.dateRange)).then(
-    //     response => {
-    //       this.tab_list = response.data.list
-    //       this.total = response.data.count
-    //       this.loading = false
-    //     }
-    //   )
+      // this.loading = true;
+      let than = this;
+      getCategory(this.queryParams).then(
+        response => {
+          // than.loading = false;
+          this.total = response.data.count;
+          let tab_list = [];
+          response.data.list.forEach((item, index) => {
+              tab_list[index] = {
+                "tab_id": item.id, 
+                "tab_name": item.name, 
+                "tab_note": item.note, 
+                "is_state": item.is_state, 
+                "operator_name": item.OperatorName, 
+                "created_at": item.createTime
+                };
+          }
+        )
+        this.tab_list = tab_list;
+      })
     },
     // 标签状态修改
     handleStatusChange(row) {
@@ -280,30 +278,18 @@ export default {
     },
     // 表单重置
     reset() {
-      if (this.$refs.menu !== undefined) {
-        this.$refs.menu.setCheckedKeys([])
-      }
-      this.form = {
-        roleId: undefined,
-        roleName: undefined,
-        roleKey: undefined,
-        roleSort: 0,
-        status: 1,
-        menuIds: [],
-        deptIds: [],
-        remark: undefined
-      }
+      this.queryParams.page = 1
+      this.queryParams.name = undefined
+      this.queryParams.is_state = -1
     //   this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageIndex = 1
       this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = []
-    //   this.resetForm('queryForm')
+      this.reset()
       this.handleQuery()
     },
     // 多选框选中数据
@@ -318,21 +304,58 @@ export default {
       this.open = true
       this.title = '添加分类'
       this.isEdit = false
+      this.form = {
+        id: "",
+        is_state: 1,
+        is_home: 1,
+        name: '',
+        note: '',
+        sort: 50
+      }
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      const roleId = row.tab_id || this.ids
-    //   getRole(roleId).then(response => {
-    //     this.form = response.data
+      const cateId = row.tab_id || this.ids[0]
+      getCategory({"id" : cateId, "is_state" : -1}).then(
+        response => {
+          this.form = {
+            id: response.data.list[0].id,
+            name: response.data.list[0].name,
+            note: response.data.list[0].note,
+            is_state: response.data.list[0].is_state,
+            is_home: response.data.list[0].is_home,
+            sort: response.data.list[0].sort,
+          }
+        }
+      )
         this.open = true
         this.title = '修改分类'
         this.isEdit = false
-    //   })
     },
     /** 提交按钮 */
     submitForm: function() {
-      
+      console.log("this.form", this.form)
+      let method = putCategory;
+      if (this.form.id == '') {
+        method = addCategory;
+        delete this.form.id;
+      }
+      this.form.sort = parseInt(this.form.sort)
+      method(this.form).then(
+        response => {
+            if (response.code == 200) {
+              this.open = false
+              this.$message({
+                message: response.msg,
+                type: 'success'
+              });
+            } else {
+              this.$message.error(response.msg);
+            }
+          this.getList()
+        }
+      )
     },
     /** 删除按钮操作 */
     handleDelete(row) {

@@ -12,12 +12,12 @@ const systemRouter = {
     icon: 'system'
   },
   children: [
-    {
-      path: 'system-commonParameter',
-      component: () => import('@/views/system/commonParameter/index'),
-      name: 'CommonParameter',
-      meta: { title: '公共参数配置' }
-    },
+    // {
+    //   path: 'system-commonParameter',
+    //   component: () => import('@/views/system/commonParameter/index'),
+    //   name: 'CommonParameter',
+    //   meta: { title: '公共参数配置' }
+    // },
     {
       path: 'system-secretKeyList',
       component: () => import('@/views/system/secretkeylist/index'),

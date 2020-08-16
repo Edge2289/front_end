@@ -8,6 +8,8 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import systemRouter from './modules/system'
+import logMethod from './modules/logMethod'
+
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -121,6 +123,7 @@ export const asyncRoutes = [
   {
     path: '/icon',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -131,8 +134,6 @@ export const asyncRoutes = [
     ]
   },
 
-  /** when your routing map is too long, you can split it into small modules **/
-  systemRouter,
   {
     path: '/example',
     component: Layout,
@@ -209,6 +210,9 @@ export const asyncRoutes = [
       }
     ]
   },
+  // 日志列表 ---START
+  logMethod,
+  // 日志列表 ---END
   {
     path: '/server',
     component: Layout,
@@ -233,6 +237,9 @@ export const asyncRoutes = [
       }
     ]
   },
+  /** 系统模块 **/
+  systemRouter,
+  
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
