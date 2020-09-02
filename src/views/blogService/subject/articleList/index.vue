@@ -345,7 +345,7 @@ export default {
     handleAdd() {
       // this.reset()
       // this.getTreeselect()
-      this.$router.push({ path: '/example/articleEdit?articleId='+123, query: this.otherQuery })
+      this.$router.push({ path: '/blogService/subject/articleEdit/index?articleId='+123, query: this.otherQuery })
     },
     /** 删除操作 */
     handleDelete(row) {
@@ -353,7 +353,7 @@ export default {
     },
     /** 更新操作 */
     handleUpdate(row) {
-      this.$router.push({ path: '/example/articleEdit?'+row.id, query: this.otherQuery })
+      this.$router.push({ path: '/blogService/subject/articleEdit?'+row.id, query: this.otherQuery })
     },
     /** 提交按钮 */
     submitForm: function() {

@@ -135,40 +135,70 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/blogService',
     component: Layout,
     redirect: '',
     name: 'blog',
     meta: {
       title: '博客内容',
-      icon: 'example'
+      icon: 'blogService'
     },
     children: [
       {
-        path: 'tabList',
-        component: () => import('@/views/example/tabList'),
-        name: 'tabList',
-        meta: { title: '文章标签', icon: 'tab' }
+        path: '/common',
+        component: () => import('@/views/blogService/common/index'),
+        name: 'BlogSeo',
+        redirect: '/blogService/common/index',
+        meta: { title: '基础信息'},
+        children: [
+          {
+            path: 'homeTab',
+            component: () => import('@/views/blogService/common/navList/index'),
+            name: 'BaiduSeo',
+            meta: { title: '首页标签', icon: 'list' }
+          },
+          {
+            path: 'basicInfo',
+            component: () => import('@/views/blogService/common/basicInfo/index'),
+            name: 'XiongZhangSeo',
+            meta: { title: '基础信息', icon: 'list' }
+          }
+        ]
       },
       {
-        path: 'category',
-        component: () => import('@/views/example/cateList/list'),
-        name: 'ArticleCategory',
-        meta: { title: '文章分类', icon: 'time-range' }
+        path: '/subject',
+        component: () => import('@/views/blogService/subject/index'),
+        name: 'BlogSeo',
+        redirect: '/blogService/subject/index',
+        meta: { title: '主体信息'},
+        children: [
+          {
+            path: 'tabList',
+            component: () => import('@/views/blogService/subject/tabList/index'),
+            name: 'tabList',
+            meta: { title: '文章标签', icon: 'tab' }
+          },
+          {
+            path: 'category',
+            component: () => import('@/views/blogService/subject/cateList/index'),
+            name: 'ArticleCategory',
+            meta: { title: '文章分类', icon: 'time-range' }
+          },
+          {
+            path: 'articleEdit',
+            component: () => import('@/views/blogService/subject/articleEdit/index'),
+            hidden: true,
+            name: 'CreateArticle',
+            meta: { title: '文章编辑', icon: 'edit' }
+          },
+          {
+            path: 'articleList',
+            component: () => import('@/views/blogService/subject/articleList/index'),
+            name: 'ArticleList',
+            meta: { title: '文章列表', icon: 'list' }
+          }
+        ]
       },
-      {
-        path: 'articleEdit',
-        component: () => import('@/views/example/create'),
-        hidden: true,
-        name: 'CreateArticle',
-        meta: { title: '文章编辑', icon: 'edit' }
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: '文章列表', icon: 'list' }
-      }
     ]
   },
   {
@@ -201,12 +231,6 @@ export const asyncRoutes = [
             meta: { title: '熊掌SEO', icon: 'list' }
           }
         ]
-      },
-      {
-        path: 'lists',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleListX',
-        meta: { title: '文章列表sds', icon: 'list' }
       }
     ]
   },
