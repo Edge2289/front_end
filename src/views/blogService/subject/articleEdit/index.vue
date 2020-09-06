@@ -85,6 +85,7 @@
 </template>
 
 <script>
+    import { getLabel} from '@/api/article/article'
     import { mavonEditor } from 'mavon-editor'
     import 'mavon-editor/dist/css/index.css'
     import "mavon-editor/dist/highlightjs/highlight.min.js";
@@ -132,7 +133,23 @@
                 console.log(val.selectedImgs[0].imgurl == undefined ? '': val.selectedImgs[0].imgurl)
             },
             getData() {
-                this.content = '```php \n asdasd \n ```  \n ### 12345'
+                this.content = '```php \n asdasd \n ```  \n ### 12345';
+                /**
+                 *  获取标签
+                 */
+                getLabel({"page": 1, "page_size": 1000, "is_state": 1}).then(
+                  response => {
+                    this.loading = false;
+                    let tab_list = [];
+                    response.data.list.forEach((item, index) => {
+                        tab_list[index] = {
+                          "tab_id": item.id, 
+                          "tab_name": item.label, 
+                          };
+                    }
+                  );
+                  console.log("tab_list", tab_list);
+                })
             },
             // 将图片上传到服务器，返回地址替换到md中
             $imgAdd(pos, $file){

@@ -60,13 +60,6 @@
           @click="handleDelete"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-        >导出</el-button>
-      </el-col>
     </el-row>
 
     <el-table v-loading="loading" :data="tab_list" @selection-change="handleSelectionChange">
@@ -77,8 +70,8 @@
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.is_state"
-            active-value="0"
-            inactive-value="1"
+            :active-value="1"
+            :inactive-value="0"
             @change="handleStatusChange(scope.row)"
           />
         </template>
@@ -116,21 +109,18 @@
 
     <!-- 添加或修改标签配置对话框 -->
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="标签名称" prop="tab_name">
-          <el-input v-model="form.roleName" placeholder="请输入标签名称" :disabled="isEdit" />
+          <el-input v-model="form.label" placeholder="请输入标签名称" :disabled="isEdit" />
         </el-form-item>
-        <el-form-item label="标签颜色" prop="roleKey">
+        <el-form-item label="标签颜色">
           <!-- <el-input v-model="form.roleKey" placeholder="请输入权限字符" :disabled="isEdit" /> -->
-          <el-color-picker v-model="form.tab_color" size="medium"></el-color-picker>
-        </el-form-item>
-        <el-form-item label="标签顺序" prop="roleSort">
-          <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
+          <el-color-picker v-model="form.color" size="medium"></el-color-picker>
         </el-form-item>
         <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
+          <el-radio-group v-model="form.is_state">
             <el-radio
-              v-for="dict in statusOptions"
+              v-for="dict in addStatusOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"
             >{{ dict.dictLabel }}</el-radio>
@@ -149,9 +139,10 @@
 <script>
 import { getLabel, putLabel, addLabel, delLabel} from '@/api/article/article'
 import { dialogDrag } from '@/utils/directives'
+import c from '@/components/ImgLibrary/c'
 
 export default {
-  name: 'Role',
+  name: 'tab',
   data() {
     return {
       // 遮罩层
@@ -175,43 +166,40 @@ export default {
       isEdit: false,
       // 日期范围
       dateRange: [],
-      // 状态数据字典
+      // 搜索状态数据字典
       statusOptions: [{
+            'dictValue': -1,
+            'dictLabel': "全部"
+        },{
             'dictValue': 1,
             'dictLabel': "开启"
         },{
             'dictValue': 0,
             'dictLabel': "关闭"
         }],
-      // 菜单列表
-      menuOptions: [],
-      // 部门列表
-      deptOptions: [],
+        // 新增
+      addStatusOptions: [{
+            'dictValue': 1,
+            'dictLabel': "开启"
+        },{
+            'dictValue': 0,
+            'dictLabel': "关闭"
+        }],
       // 查询参数
       queryParams: {
         page: 1,
         page_size: 10,
         label: "",
-        is_state: 0,
+        is_state: -1,
       },
       // 表单参数
-      form: {},
+      form: {
+        is_state: 0,
+      },
       defaultProps: {
         children: 'children',
         label: 'label'
       },
-      // 表单校验
-      rules: {
-        roleName: [
-          { required: true, message: '标签名称不能为空', trigger: 'blur' }
-        ],
-        roleKey: [
-          { required: true, message: '权限字符不能为空', trigger: 'blur' }
-        ],
-        roleSort: [
-          { required: true, message: '标签顺序不能为空', trigger: 'blur' }
-        ]
-      }
     }
   },
   created() {
@@ -240,26 +228,22 @@ export default {
         this.tab_list = tab_list;
       })
     },
-    /** 查询部门树结构 */
-    getDeptTreeselect() {
-      deptTreeselect().then(response => {
-        this.deptOptions = response.data.list
-      })
-    },
     // 标签状态修改
     handleStatusChange(row) {
-      const text = row.is_state === '0' ? '启用' : '停用'
-      console.log("row.is_state", row.is_state)
+      const text = row.is_state == 1 ? '启用' : '停用'
       this.$confirm('确认要"' + text + '""' + row.tab_name + '"标签吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(function() {
-        return changeRoleStatus(row.tab_id, row.is_state)
-      }).then(() => {
-        this.msgSuccess(text + '成功')
+        putLabel({
+            "label": row.tab_name,
+            "color": row.tab_color,
+            "is_state": row.is_state,
+            "id": row.tab_id,
+          })      
       }).catch(function() {
-        row.is_state = row.is_state === '0' ? '1' : '0'
+        row.is_state = row.is_state == 0 ? 1 : 0
       })
     },
     // 取消按钮
@@ -274,18 +258,10 @@ export default {
     },
     // 表单重置
     reset() {
-      if (this.$refs.menu !== undefined) {
-        this.$refs.menu.setCheckedKeys([])
-      }
       this.form = {
-        roleId: undefined,
-        roleName: undefined,
-        roleKey: undefined,
-        roleSort: 0,
-        status: '0',
-        menuIds: [],
-        deptIds: [],
-        remark: undefined
+        label: "",
+        color: "",
+        is_state: -1
       }
     //   this.resetForm('form')
     },
@@ -299,12 +275,12 @@ export default {
       this.queryParams.page = 1;
       this.queryParams.page_size = 10;
       this.queryParams.label = '';
-      this.queryParams.is_state = '';
+      this.queryParams.is_state = -1;
       this.handleQuery()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.roleId)
+      this.ids = selection.map(item => item.tab_id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -318,60 +294,41 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      const roleId = row.roleId || this.ids
-    //   getRole(roleId).then(response => {
-    //     this.form = response.data
+      const tabIds = row.tab_id || this.ids[0]
+        getLabel({"id": tabIds,"is_state": -1}).then(response => {
+          this.form.label = response.data.list[0].label;
+          this.form.is_state = response.data.list[0].is_state;
+          this.form.color = response.data.list[0].color;
+          this.form.id = response.data.list[0].id;
+        })
         this.open = true
         this.title = '修改标签'
-        this.isEdit = true
+        this.isEdit = false
     //   })
     },
     /** 提交按钮 */
     submitForm: function() {
-      this.$refs['form'].validate(valid => {
-        if (valid) {
-          if (this.form.roleId !== undefined) {
-            this.form.menuIds = this.getMenuAllCheckedKeys()
-            updateRole(this.form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess('修改成功')
-                this.open = false
-                this.getList()
-              } else {
-                this.msgError(response.msg)
-              }
-            })
-          } else {
-            this.form.menuIds = this.getMenuAllCheckedKeys()
-            addRole(this.form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess('新增成功')
-                this.open = false
-                this.getList()
-              } else {
-                this.msgError(response.msg)
-              }
-            })
-          }
-        }
+      console.log("this.form", this.form);
+      let requestHeader = "";
+      if(this.form.id !== undefined) {
+        requestHeader = putLabel(this.form);
+      } else {
+        requestHeader = addLabel(this.form)
+      }
+      requestHeader.then(response => {
+        if (response.code == 200) {
+              this.open = false
+              this.$message({
+                message: response.msg,
+                type: 'success'
+              });
+            } else {
+              this.$message.error(response.msg);
+            }
+          this.getList()
       })
     },
-    /** 提交按钮（数据权限） */
-    submitDataScope: function() {
-      if (this.form.roleId !== undefined) {
-        this.form.deptIds = this.getDeptAllCheckedKeys()
-        console.log(this.getDeptAllCheckedKeys())
-        dataScope(this.form).then(response => {
-          if (response.code === 200) {
-            this.msgSuccess('修改成功')
-            this.openDataScope = false
-            this.getList()
-          } else {
-            this.msgError(response.msg)
-          }
-        })
-      }
-    },
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const tab_ids = row.tab_id || this.ids
@@ -380,36 +337,16 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(function() {
-        return delRole(tab_ids)
+        delLabel({
+          "id": tab_ids
+        }).then(response => {
+          console.log(response.data)
+        })
       }).then(() => {
         this.getList()
         this.msgSuccess('删除成功')
       }).catch(function() {})
     },
-    /** 导出按钮操作 */
-    // handleExport() {
-    //   this.$confirm('是否确认导出所有标签数据项?', '警告', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning'
-    //   }).then(() => {
-    //     this.downloadLoading = true
-    //     import('@/vendor/Export2Excel').then(excel => {
-    //       const tHeader = ['标签编号', '标签名称', '权限字符', '显示顺序', '状态', '创建时间']
-    //       const filterVal = ['roleId', 'roleName', 'roleKey', 'roleSort', 'status', 'createdAt']
-    //       const list = this.tab_list
-    //       const data = formatJson(filterVal, list)
-    //       excel.export_json_to_excel({
-    //         header: tHeader,
-    //         data,
-    //         filename: '标签管理',
-    //         autoWidth: true, // Optional
-    //         bookType: 'xlsx' // Optional
-    //       })
-    //       this.downloadLoading = false
-    //     })
-    //   })
-    // }
   }
 }
 </script>

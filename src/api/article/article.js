@@ -62,7 +62,7 @@ export function getLabel(data) {
 export function addLabel(data) {
   return request({
       url: ApiUrl.getLabel,
-      method: 'post`',
+      method: 'post',
       params: data
     })
 }
