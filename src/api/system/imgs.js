@@ -4,9 +4,9 @@ import { ApiUrl } from '@/api/apiUrl/apiUrl'
 /**
  * 上传图片
  */
-export function uploadImg() {
+export function uploadImg(data) {
     return request({
-        url: ApiUrl.login,
+        url: ApiUrl.uploadImgs,
         method: 'post',
         data
       })
@@ -15,21 +15,21 @@ export function uploadImg() {
 /**
  *  获取图片文件
  */
-export function getImgs() {
+export function getImgs(data) {
     return request({
-        url: ApiUrl.login,
-        method: 'post',
-        data
+        url: ApiUrl.searchImgs,
+        method: 'get',
+        params: data
       })
 }
 
 /**
  * 移动图片至分组
  */
-export function mvImgs() {
+export function mvImgs(data) {
     return request({
-        url: ApiUrl.login,
-        method: 'post',
+        url: ApiUrl.mvImgs,
+        method: 'put',
         data
       })
 }
@@ -39,8 +39,8 @@ export function mvImgs() {
  */
 export function delImgs(data) {
     return request({
-        url: ApiUrl.login,
-        method: 'post',
+        url: ApiUrl.delImgs,
+        method: 'delete',
         data
       })
 }
@@ -62,7 +62,7 @@ export function getGroupText(data) {
 export function updateGroupText(data) {
     return request({
         url: ApiUrl.updateImgsGroup,
-        method: 'option',
+        method: 'put',
         data
       })
 }

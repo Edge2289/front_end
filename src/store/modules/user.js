@@ -41,19 +41,19 @@ const actions = {
         "Name" : 1,
       }
 
-      // login({
-      //   user_name: username.trim(),
-      //   pwd: password,
-      //   code: code,
-      //   uuid: uuid
-      // }).then(response => {
-      //   const { data } = response
-      //   console.log("data", data)
-      //   /**
-      //    * 存储一些加密数据
-      //    * 菜单数据
-      //    * 用户数据
-      //    */
+      login({
+        user_name: username.trim(),
+        pwd: password,
+        code: code,
+        uuid: uuid
+      }).then(response => {
+        const { data } = response
+        console.log("data", data)
+        /**
+         * 存储一些加密数据
+         * 菜单数据
+         * 用户数据
+         */
         setUserData(data)
         setToken("asdasd")
         commit('SET_ROLES', ['admin'])
@@ -62,9 +62,9 @@ const actions = {
         commit('SET_INTRODUCTION', data.LoginName)
 
         resolve(data)
-      // }).catch(error => {
-      //   reject(error)
-      // })
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
 

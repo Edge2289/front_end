@@ -20,16 +20,11 @@
       return {
         GroupTextTitle: "新增分组",
         newEditGroupText: "",
+        newEditGroupId: 0,
         innerVisible: false,
         src: "",
         // 分组的列表
-        groupList: [
-          { name: "博客默认信息", id: 1 },
-          { name: "图标类", id: 2 },
-          { name: "车行类", id: 3 },
-          { name: "大型活动场合", id: 4 },
-          { name: "租房展示图", id: 5 }
-        ],
+        groupList: [],
         // 图片列表 一页20条数据
         imgList: [],
         /**
@@ -42,13 +37,15 @@
         // 上传
         uploadImg: {},
         // 页码 默认为1开始 pageSize = 20
-        page: 1,
-        pageSize: 20,
-        selectPage: 1
+        pageIndex: 1,
+        pageSize: 10,
+        total: 20,
       };
     },
     mounted() {},
     created() {
+      this.getImgsList();
+      // this.getImgsList();
       /**
        * 页面加载初始执行
        *
@@ -69,20 +66,34 @@
     // 方法定义
     methods: {
       // 获取图片
-      getImgs() {
+      getImgsList() {
         getImgs({
-          cate_id: this.searchSelectedGroup
+          "cate_id": this.searchSelectedGroup,
+          "pageIndex": this.pageIndex,
+          "pageSize": this.pageSize
         }).then(res => {
-          console.log("getGroupText", res);
+          // if (res != 200) {
+          //   this.$message.error(res.message);
+          //   return;
+          // }
+          let imgList = [];
+          res.data.list.forEach(function (item, index) {
+            imgList[index] = {
+              "id":item.id,
+              "url":item.domain + item.url,
+              "name": item.url
+            }
+          });
+          this.total = res.data.count;
+          this.imgList = imgList;
         });
       },
       // 获取分组
       getGroupText() {
-        // getGroupText().then(res => {
-        //   console.log("getGroupText", res);
-        // });
+        getGroupText().then(res => {
+          this.groupList = res.data
+        });
       },
-
       /**
        *  状态以及 所选的图片地址
        */
@@ -94,21 +105,47 @@
       },
       // 新增分组框
       newGroup() {
-        this.GroupTextTitle = "新增分组"
-        this.newEditGroupText = ""
-        this.innerVisible = true
+        this.GroupTextTitle = "新增分组";
+        this.newEditGroupText = "";
+        this.newEditGroupId = 0;
+        this.innerVisible = true;
       },
       // 新增分组请求
       groupNewEdit() {
-        console.log(this.newEditGroupText)
-        if(this.newEditGroupText == "" || this.newEditGroupText || undefined) {
-          console.log("为空00")
+        if(this.newEditGroupText == "" || this.newEditGroupText == undefined) {
+          this.$message.error('分组名称为空');
+          return;
         }
         this.innerVisible = false
+
+        let requestObj = addGroupText
+        if(this.newEditGroupId != 0) {
+          requestObj = updateGroupText
+        }
+        /**
+         * 请求体
+         */
+        requestObj({
+          "id": this.newEditGroupId,
+          "name": this.newEditGroupText,
+          "sort": 50
+        }).then(res => {
+          if (res.code != 200) {
+            this.$message.error(res.msg);
+            return;
+          }
+          this.getGroupText();
+        })
+        this.$message({
+          message: "操作成功",
+          type: 'success'
+        });
       },
       // 选中分组
       selectGroup(id) {
-        this.searchSelectedGroup = id
+        this.searchSelectedGroup = id;
+        this.selectedImgs = [];
+        this.getImgsList();
         /**
          * 请求图片分组数据
          */
@@ -118,12 +155,35 @@
         // 编辑分组名字
         this.GroupTextTitle = "编辑分组信息";
         this.newEditGroupText = item.name;
+        this.newEditGroupId = item.id;
         this.innerVisible = true;
         console.log(item);
       },
       delGroupText(item) {
         // 删除分组名字
-        console.log(item);
+        this.$confirm('此操作将永久删除该分组,该分组下的图片将转移到未分组, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          delGroupText({"id": item.id}).then(res => {
+            if (res.code != 200) {
+              this.$message.error(res.msg);
+              return;
+            }
+            this.getGroupText();
+          })
+          this.$message({
+            message: "操作成功",
+            type: 'success'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已撤销操作'
+          });   
+          return;       
+        });
       },
       // 分组特效  STAST
       changeActive($event) {
@@ -209,22 +269,23 @@
               /* 第一个参数是创建的img对象；第二三个参数是左上角坐标，后面两个是画布区域宽高*/
               // 压缩后的base64文件
               var newUrl = canvas.toDataURL("image/jpeg", 0.92)
-              console.log("newUrl", newUrl)
               uploadImg({
                 data: newUrl,
                 cate_id: 0
               }).then(res => {
-                console.log(" res", res)
+                if(res.code != 200) {
+                  this.$message.error(res.message)
+                }
+                that.getImgsList();
               })
-              //  that.Api.post("/app/uploadPicture",{ fileContent:newUrl})
-              //  .then(res => {
-              //   that.addRule.pictureUrl = res.data;
-              // })
-              //  .catch(err => {
-              //  })
             }
           }
         }
+        this.$message({
+          message: "操作成功",
+          type: 'success'
+        });
+        that.getImgsList();
       },
       // 上传结果
       handleAvatarSuccess() {
@@ -232,8 +293,9 @@
       },
       // 点击图片
       clickImgs: function($event){
-        let imgurl = $event.currentTarget.getAttribute("imgurl")
-        let id = $event.currentTarget.getAttribute("id")
+        let imgurl = $event.currentTarget.getAttribute("imgurl");
+        let id = $event.currentTarget.getAttribute("id");
+        console.log("id", id);
         /**
          *  判断是选中还是取消选中
          */
@@ -257,7 +319,23 @@
           this.alertEmptyImgs()
           return
         }
-        console.log("删除图片",  this.selectedImgs)
+        let ids = [];
+        this.selectedImgs.forEach(function(item, key) {
+          ids[key] = item.id;
+        })
+        delImgs({
+          "ids": ids.join(",")
+        }).then(res => {
+          if (res.code != 200) {
+              this.$message.error(res.message);
+          }
+          this.getImgsList();
+        })
+        this.$message({
+          "message": "操作成功",
+          "type": "success"
+        })
+        this.selectedImgs = [];
       },
       // 移动分组
       mvImgsGroup(command) {
@@ -266,8 +344,24 @@
           this.alertEmptyImgs()
           return
         }
-          console.log("groupId", command)
-          console.log("this.selectedImgs", this.selectedImgs)
+        let ids = [];
+        this.selectedImgs.forEach(function(item, key) {
+          ids[key] = item.id;
+        })
+        mvImgs({
+          "ids": ids.join(","),
+          "cate_id": command
+        }).then(res => {
+          if (res.code != 200) {
+              this.$message.error(res.message);
+          }
+          this.getImgsList();
+        })
+        this.$message({
+          "message": "操作成功",
+          "type": "success"
+        })
+        this.selectedImgs = [];
       },
       alertEmptyImgs(text){
         // 选中图片为空弹窗

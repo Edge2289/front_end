@@ -8,7 +8,7 @@ export function getArticleList(data) {
     return request({
         url: ApiUrl.getArticleApi,
         method: 'get',
-        data
+        params: data
       })
 }
 /**
@@ -18,7 +18,7 @@ export function updateArticle(data) {
     return request({
         url: ApiUrl.updateArticleApi,
         method: 'put',
-        data
+        params: data
       })
 }
 /**
@@ -28,7 +28,7 @@ export function addArticle(data) {
     return request({
         url: ApiUrl.addArticleApi,
         method: 'post',
-        data
+        params: data
       })
 }
 /**
@@ -38,7 +38,7 @@ export function delArticle(data) {
     return request({
         url: ApiUrl.delArticleApi,
         method: 'delete',
-        data
+        params: data
       })
 }
 

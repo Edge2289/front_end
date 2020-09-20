@@ -141,7 +141,7 @@ export const asyncRoutes = [
     name: 'blog',
     meta: {
       title: '博客内容',
-      icon: 'blogService'
+      icon: 'job'
     },
     children: [
       {

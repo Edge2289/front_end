@@ -13,7 +13,7 @@
               <i class="el-icon-delete" />
             </a>
         </div>
-        <div style="margin-left: 12px;" @click="newGroup()"><a>新增分组</a></div>
+        <div style="margin-left: 12px;text-decoration: underline;" @click="newGroup()"><a>新增分组</a></div>
       </el-aside>
 
       <!-- 中间部分 -->
@@ -28,7 +28,7 @@
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item disabled>请选择分组</el-dropdown-item>
-                  <el-dropdown-item command="1">黄金糕</el-dropdown-item>
+                  <el-dropdown-item :command="item.id" v-for="(item, key) in groupList" :id="item.id" :key="key">{{ item.name }}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <el-button type="danger" @click="delImgs" size="mini">删除</el-button>
@@ -58,15 +58,18 @@
         <!-- 中间部分 -->
         <!-- 顶部的页码 -->
         <el-footer style="height: 40px;text-align: center;">
+          <div class="block">
+          <pagination
+            style="margin-top: 20px"
+            v-show="total>0"
+            :total="total"
+            small
+            :page.sync="pageIndex"
+            :limit.sync="pageSize"
+            @pagination="getImgsList"
+          />
+        </div>
           <!-- 页码 -->
-          <div style="margin: 5px; ">
-            <div class="pageClass" style="margin-right: 30px;">
-              <i class="el-icon-d-arrow-right" style="padding: 5px;" />
-            </div>
-            <div class="pageClass" style="margin-left: 20px;">
-              <i class="el-icon-d-arrow-left" style="padding: 5px;" />
-            </div>
-          </div>
         </el-footer>
         <!-- 顶部的页码 -->
       </el-container>

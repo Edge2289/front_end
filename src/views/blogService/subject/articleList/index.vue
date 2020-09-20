@@ -6,6 +6,7 @@
         <div class="head-container">
           <el-input
             v-model="cateName"
+            @keyup.enter.native="getCareselect"
             placeholder="请输入分类名称"
             clearable
             size="small"
@@ -17,7 +18,7 @@
           <el-tree
             ref="tree"
             v-loading="cateLoading"
-            :data="deptOptions"
+            :data="cateOptions"
             :props="defaultProps"
             @node-click="handleNodeClick"
           />
@@ -99,17 +100,21 @@
 
         <el-table
           v-loading="loading"
-          :data="userList"
+          :data="articleList"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="45" align="center" />
-          <el-table-column label="编号" width="50" align="center" prop="userId" />
-          <el-table-column label="文章名称" align="center" prop="username" :show-overflow-tooltip="true" />
-          <el-table-column label="文章作者" align="center" prop="nickName" :show-overflow-tooltip="true" />
-          <el-table-column label="文章配图" align="center" prop="deptName" :show-overflow-tooltip="true" />
-          <el-table-column label="文章分类" align="center" prop="phone" width="120" />
-          <el-table-column label="点赞数" align="center" prop="phone" width="120" />
-          <el-table-column label="评论数" align="center" prop="phone" width="120" />
+          <el-table-column label="编号" width="50" align="center" prop="id" />
+          <el-table-column label="文章名称" align="center" prop="title" :show-overflow-tooltip="true" />
+          <el-table-column label="文章作者" align="center" prop="nick" :show-overflow-tooltip="true" />
+          <el-table-column label="文章配图">
+        　　<template slot-scope="scope">
+        　　　　<img :src="scope.row.img" width="40" height="40" class="head_pic"/>
+        　　</template>
+        </el-table-column>
+          <el-table-column label="文章分类" align="center" prop="cate_id" width="120" />
+          <el-table-column label="点赞数" align="center" prop="click_num" width="120" />
+          <el-table-column label="总阅读量" align="center" prop="read_num" width="120" />
           <el-table-column label="状态" width="50" align="center">
             <template slot-scope="scope">
               <el-switch
@@ -122,7 +127,7 @@
           </el-table-column>
           <el-table-column label="创建时间" align="center" prop="createdAt" width="165">
             <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.createdAt) }}</span>
+              <span>{{ scope.row.createTime }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -163,10 +168,11 @@
 </template>
 
 <script>
-import { getArticleList, getUdelArticleser, updateArticle, addArticle, getLabel} from '@/api/article/article'
-import { getToken } from '@/utils/auth'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { getArticleList, delArticle, updateArticle, getLabel} from '@/api/article/article';
+import { getCategory } from '@/api/article/category';
+import { getToken } from '@/utils/auth';
+import Treeselect from '@riophae/vue-treeselect';
+import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 export default {
   name: 'User',
   components: { Treeselect },
@@ -184,27 +190,12 @@ export default {
       multiple: true,
       // 总条数
       total: 0,
-      // 用户表格数据
-      userList: null,
+      // 文章表格数据
+      articleList: null,
       // 弹出层标题
       title: '',
       // 分类树选项
-      deptOptions: [{
-          label: '青柠檬',
-          children: []
-        },{
-          label: '蓝苹果',
-          children: []
-        },{
-          label: '紫雪梨',
-          children: []
-        },{
-          label: '红香蕉',
-          children: []
-        },{
-          label: '黑西瓜',
-          children: []
-        }],
+      cateOptions: [],
       // 分类名称
       cateName: undefined,
       // 状态数据字典
@@ -214,77 +205,69 @@ export default {
         },{
             'dictValue': 0,
             'dictLabel': "关闭"
+        },{
+            'dictValue': -1,
+            'dictLabel': "全部"
         }],
       // 表单参数
       form: {},
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label: 'name'
       },
       // 查询参数
       queryParams: {
         pageIndex: 1,
-        pageSize: 10,
-        username: undefined,
-        phone: undefined,
-        status: undefined,
-        deptId: undefined
+        pageSize: 30,
+        nick: '',
+        title: '',
+        is_state: -1,
+        cate_id: 0
       },
     }
   },
   watch: {
-    // 根据名称筛选部门树
-    deptName(val) {
-      this.$refs.tree.filter(val)
+    // 根据名称筛选分类树
+    cateName(val) {
+      this.getCareselect();
     }
   },
   created() {
     this.getList()
-    // this.getTreeselect()
-    // this.getDicts('sys_normal_disable').then(response => {
-    //   this.statusOptions = response.data
-    // })
-    // this.getDicts('sys_user_sex').then(response => {
-    //   this.sexOptions = response.data
-    // })
-    // this.getConfigKey('sys.user.initPassword').then(response => {
-    //   this.initPassword = response.msg
-    // })
+    this.getCareselect()
   },
   methods: {
-    handleNodeClick(data) {
-      console.log(data);
-    },
     /** 查询用户列表 */
     getList() {
-      // this.loading = true
-      getArticleList([]).then(
+      this.loading = true;
+      getArticleList(this.queryParams).then(
         response => {
-          // this.userList = response.data.list
-          // this.total = response.data.count
-          // this.loading = false
+          this.articleList = response.data.list
+          this.total = response.data.count
+          this.loading = false;
           console.log("response.data", response.data);
         }
       )
     },
-    /** 查询部门下拉树结构 */
-    getTreeselect() {
-      treeselect().then(response => {
-        this.deptOptions = response.data
+    /** 查询分类下拉树结构 */
+    getCareselect() {
+      getCategory({
+        "page": 1,
+        "page_sieze": 1000,
+        "is_state": 1,
+        "name": this.cateName == undefined ? '': this.cateName
+      }).then(response => {
+        this.cateOptions = response.data.list
       })
-    },
-    // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true
-      return data.deptName.indexOf(value) !== -1
     },
     // 节点单击事件
     handleNodeClick(data) {
-      // this.loading = true
-      // this.queryParams.deptId = data.deptId
-      // this.getList()
+      this.loading = true
+      this.queryParams.cate_id = data.id
+      this.getList()
+      console.log(data)
     },
-    // 用户状态修改
+    // 文章状态修改
     handleStatusChange(row) {
       const text = row.status === '0' ? '启用' : '停用'
       this.$confirm('确认要"' + text + '""' + row.username + '"用户吗?', '警告', {
@@ -307,16 +290,11 @@ export default {
     // 表单重置
     reset() {
       this.queryParams = {
-        userId: undefined,
-        deptId: undefined,
         username: undefined,
         nickName: undefined,
         password: undefined,
         title: undefined,
         nick: undefined,
-        phone: undefined,
-        email: undefined,
-        sex: undefined,
         status: '0',
         remark: undefined,
         postIds: undefined,
@@ -337,7 +315,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.userId)
+      this.ids = selection.map(item => item.id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -345,7 +323,7 @@ export default {
     handleAdd() {
       // this.reset()
       // this.getTreeselect()
-      this.$router.push({ path: '/subject/articleEdit?articleId='+123, query: this.otherQuery })
+      this.$router.push({ path: '/subject/articleEdit', query: this.otherQuery })
     },
     /** 删除操作 */
     handleDelete(row) {
@@ -353,35 +331,8 @@ export default {
     },
     /** 更新操作 */
     handleUpdate(row) {
-      this.$router.push({ path: '/subject/articleEdit?'+row.id, query: this.otherQuery })
-    },
-    /** 提交按钮 */
-    submitForm: function() {
-      this.$refs['form'].validate(valid => {
-        if (valid) {
-          if (this.form.userId !== undefined) {
-            updateUser(this.form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess('修改成功')
-                this.open = false
-                this.getList()
-              } else {
-                this.msgError(response.msg)
-              }
-            })
-          } else {
-            addUser(this.form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess('新增成功')
-                this.open = false
-                this.getList()
-              } else {
-                this.msgError(response.msg)
-              }
-            })
-          }
-        }
-      })
+      let id = row.tab_id || this.ids[0]
+      this.$router.push({ path: '/subject/articleEdit?articleId='+ id, query: this.otherQuery })
     },
   }
 }

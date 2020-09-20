@@ -1,5 +1,5 @@
 <template>
-<el-main >
+<el-main style="overflow: initial;">
       <div class="block" style="height:80%;width: 100%;">
             <!-- {{se lected}} -->
             <div style="height:30px;width:100%;margin: 0px;" >
