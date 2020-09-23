@@ -55,7 +55,7 @@ const actions = {
          * 用户数据
          */
         setUserData(data)
-        setToken("asdasd")
+        // setToken("asdasd")
         commit('SET_ROLES', ['admin'])
         commit('SET_NAME', data.LoginName)
         commit('SET_AVATAR', data.Name)

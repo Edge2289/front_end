@@ -265,7 +265,6 @@ export default {
       this.loading = true
       this.queryParams.cate_id = data.id
       this.getList()
-      console.log(data)
     },
     // 文章状态修改
     handleStatusChange(row) {
@@ -295,12 +294,12 @@ export default {
         password: undefined,
         title: undefined,
         nick: undefined,
-        status: '0',
+        is_state: -1,
         remark: undefined,
         postIds: undefined,
         roleIds: undefined
       }
-      // this.resetForm('form')
+      this.getList();
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -331,7 +330,7 @@ export default {
     },
     /** 更新操作 */
     handleUpdate(row) {
-      let id = row.tab_id || this.ids[0]
+      let id = row.id || this.ids[0]
       this.$router.push({ path: '/subject/articleEdit?articleId='+ id, query: this.otherQuery })
     },
   }

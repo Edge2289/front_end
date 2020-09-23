@@ -18,7 +18,7 @@ export function updateArticle(data) {
     return request({
         url: ApiUrl.updateArticleApi,
         method: 'put',
-        params: data
+        data
       })
 }
 /**
@@ -28,7 +28,7 @@ export function addArticle(data) {
     return request({
         url: ApiUrl.addArticleApi,
         method: 'post',
-        params: data
+        data
       })
 }
 /**

@@ -84,14 +84,14 @@
     padding-top: 10px;
     padding-bottom: 10px;"
     >
-      <el-button type="primary" @click="submit">立即创建</el-button>
+      <el-button type="primary" @click="onSubmit">立即保存</el-button>
       <el-button @click="cancel">取消</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import { getLabel, addArticle, getArticleList } from "@/api/article/article";
+import { getLabel, updateArticle, addArticle, getArticleList } from "@/api/article/article";
 import { getCategory } from '@/api/article/category';
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
@@ -167,8 +167,6 @@ export default {
           "is_state": -1
           }).then(
           response => {
-            console.log("response.data", response.data.list[0]);
-            
             this.dialogImageUrl = response.data.list[0].img;
             this.form.title = response.data.list[0].title;
             this.form.nick = response.data.list[0].nick;
@@ -222,15 +220,15 @@ export default {
     $imgAdd(pos, $file) {
       let formdata = new FormData();
 
-      this.$upload
-        .post("/上传接口地址", formdata)
-        .then((res) => {
-          console.log(res.data);
-          this.$refs.md.$img2Url(pos, res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // this.$upload
+      //   .post("/上传接口地址", formdata)
+      //   .then((res) => {
+      //     console.log(res.data);
+      //     this.$refs.md.$img2Url(pos, res.data);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     },
     // 所有操作都会被解析重新渲染
     change(value, render) {
@@ -238,16 +236,20 @@ export default {
       this.html = render;
     },
     // 提交
-    submit() {
+    onSubmit() {
       /**
        *  文章保存
        */
-      console.log(this.html)
+      let articleId = this.$route.query.articleId;
+      let requestHeader = addArticle;
+      if (!(articleId == undefined || articleId == '')) {
+        this.form.id = parseInt(articleId);
+        requestHeader = updateArticle;
+      }
       this.form.img = this.dialogImageUrl;
       this.form.text = this.html;
       this.form.markdown = this.content;
-      console.log(this.form);
-      addArticle(this.form).then(response => {
+      requestHeader(this.form).then(response => {
         console.log("response", response.data);
       })
       // this.$message.success('提交成功，已打印至控制台！');

@@ -23,13 +23,9 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
     config.headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     }
-
-    if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
+    if (getToken()) {
       config.headers['Authorization'] = 'Bearer ' + getToken()
     }
     return config

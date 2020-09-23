@@ -159,7 +159,6 @@ import { getCategory, putCategory, addCategory, delCategory} from '@/api/article
 // import { treeselect as deptTreeselect, roleDeptTreeselect } from '@/api/system/dept'
 // import { formatJson } from '@/utils'
 import { dialogDrag } from '@/utils/directives'
-import { updateArticle } from '@/api/article'
 
 export default {
   name: 'Role',
