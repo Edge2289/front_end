@@ -65,7 +65,6 @@
           <Tinymce ref="editor" v-model="postForm.content" :height="400" />
         </el-form-item>
 
-
       </div>
     </el-form>
   </div>

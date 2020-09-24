@@ -26,13 +26,13 @@ const systemRouter = {
     },
     {
       path: 'system-configuration',
-      component: () => import('@/views/system/inline-edit-table'),
+      component: () => import('@/views/system/configuration/index'),
       name: 'configuration',
       meta: { title: '第三方配置' }
     },
     {
       path: 'system-website',
-      component: () => import('@/views/system/complex-table'),
+      component: () => import('@/views/system/website/index'),
       name: 'Website',
       meta: { title: '网站设置' }
     }

@@ -145,6 +145,7 @@ export const asyncRoutes = [
       {
         path: 'create',
         component: () => import('@/views/example/create'),
+        hidden: true,
         name: 'CreateArticle',
         meta: { title: '新建文章', icon: 'edit' }
       },
