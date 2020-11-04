@@ -35,6 +35,12 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password, uuid, code } = userInfo
     return new Promise((resolve, reject) => {
+      
+      let data = {
+        "LoginName" : 1,
+        "Name" : 1,
+      }
+
       login({
         user_name: username.trim(),
         pwd: password,
@@ -42,13 +48,14 @@ const actions = {
         uuid: uuid
       }).then(response => {
         const { data } = response
+        console.log("data", data)
         /**
          * 存储一些加密数据
          * 菜单数据
          * 用户数据
          */
         setUserData(data)
-
+        // setToken("asdasd")
         commit('SET_ROLES', ['admin'])
         commit('SET_NAME', data.LoginName)
         commit('SET_AVATAR', data.Name)

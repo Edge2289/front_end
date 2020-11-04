@@ -7,9 +7,9 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
 import systemRouter from './modules/system'
+import logMethod from './modules/logMethod'
+
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -71,14 +71,31 @@ export const constantRoutes = [
   },
   {
     path: '/',
+    name: 'Dashboard',
     component: Layout,
     redirect: '/dashboard',
+    meta: {
+      title: 'Dashboard',
+      icon: 'dashboard'
+    },
     children: [
       {
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '控制面板', icon: 'dashboard', affix: true }
+        meta: { title: '分析页', icon: 'druid', affix: true }
+      },
+      {
+        path: 'monitor',
+        component: () => import('@/views/dashboard/monitor'),
+        name: 'Monitor',
+        meta: { title: '监控页', icon: 'international'}
+      },
+      {
+        path: 'workplace',
+        component: () => import('@/views/dashboard/workplace'),
+        name: 'Workplace',
+        meta: { title: '工作台', icon: 'people' }
       }
     ]
   },
@@ -106,6 +123,7 @@ export const asyncRoutes = [
   {
     path: '/icon',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -116,72 +134,136 @@ export const asyncRoutes = [
     ]
   },
 
-  /** when your routing map is too long, you can split it into small modules **/
-  componentsRouter,
-  chartsRouter,
-  systemRouter,
   {
-    path: '/example',
+    path: '/blogService',
     component: Layout,
     redirect: '',
     name: 'blog',
     meta: {
       title: '博客内容',
-      icon: 'example'
+      icon: 'job'
     },
     children: [
       {
-        path: 'tabList',
-        component: () => import('@/views/example/list'),
-        name: 'tabList',
-        meta: { title: '文章标签', icon: 'tab' }
+        path: '/common',
+        component: () => import('@/views/blogService/common/index'),
+        name: 'BlogSeo',
+        redirect: '/blogService/common/index',
+        meta: { title: '基础信息'},
+        children: [
+          {
+            path: 'homeTab',
+            component: () => import('@/views/blogService/common/navList/index'),
+            name: 'BaiduSeo',
+            meta: { title: '首页标签', icon: 'list' }
+          },
+          {
+            path: 'basicInfo',
+            component: () => import('@/views/blogService/common/basicInfo/index'),
+            name: 'XiongZhangSeo',
+            meta: { title: '基础信息', icon: 'list' }
+          }
+        ]
       },
       {
-        path: 'category',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleCategory',
-        meta: { title: '文章分类', icon: 'time-range' }
+        path: '/subject',
+        component: () => import('@/views/blogService/subject/index'),
+        name: 'BlogSeo',
+        redirect: '/blogService/subject/index',
+        meta: { title: '主体信息'},
+        children: [
+          {
+            path: 'tabList',
+            component: () => import('@/views/blogService/subject/tabList/index'),
+            name: 'tabList',
+            meta: { title: '文章标签', icon: 'tab' }
+          },
+          {
+            path: 'category',
+            component: () => import('@/views/blogService/subject/cateList/index'),
+            name: 'ArticleCategory',
+            meta: { title: '文章分类', icon: 'time-range' }
+          },
+          {
+            path: 'articleEdit',
+            component: () => import('@/views/blogService/subject/articleEdit/index'),
+            hidden: true,
+            name: 'CreateArticle',
+            meta: { title: '文章编辑', icon: 'edit' }
+          },
+          {
+            path: 'articleList',
+            component: () => import('@/views/blogService/subject/articleList/index'),
+            name: 'ArticleList',
+            meta: { title: '文章列表', icon: 'list' }
+          }
+        ]
       },
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        hidden: true,
-        name: 'CreateArticle',
-        meta: { title: '新建文章', icon: 'edit' }
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: '文章列表', icon: 'list' }
-      }
     ]
   },
-
   {
-    path: '/tab',
+    path: '/seo',
     component: Layout,
+    redirect: '',
+    name: 'SEO',
+    meta: {
+      title: 'SEO',
+      icon: 'nested'
+    },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'Tab', icon: 'tab' }
+        path: '/blog_seo',
+        component: () => import('@/views/seo/blog_seo/index'),
+        name: 'BlogSeo',
+        redirect: '/seo/blog_seo/index',
+        meta: { title: '博客SEO'},
+        children: [
+          {
+            path: 'baidu_seo',
+            component: () => import('@/views/seo/blog_seo/baidu_seo/index'),
+            name: 'BaiduSeo',
+            meta: { title: '百度SEO', icon: 'list' }
+          },
+          {
+            path: 'xiongzhang_seo',
+            component: () => import('@/views/seo/blog_seo/xiongzhang_seo/index'),
+            name: 'XiongZhangSeo',
+            meta: { title: '熊掌SEO', icon: 'list' }
+          }
+        ]
       }
     ]
   },
+  // 日志列表 ---START
+  logMethod,
+  // 日志列表 ---END
   {
-    path: '/menu',
+    path: '/server',
     component: Layout,
+    redirect: '',
+    name: 'Server',
+    meta: {
+      title: '系统监控',
+      icon: 'server'
+    },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/menu/index'),
-        name: 'menuTab',
-        meta: { title: 'menu', icon: 'tab' }
+        path: 'monitor',
+        component: () => import('@/views/server/monitor/index'),
+        name: 'monitor',
+        meta: { title: '服务监控', icon: 'server' }
+      },
+      {
+        path: 'apimonitor',
+        component: () => import('@/views/server/monitor/index'),
+        name: 'apimonitor',
+        meta: { title: 'api监控', icon: 'server' }
       }
     ]
   },
+  /** 系统模块 **/
+  systemRouter,
+  
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

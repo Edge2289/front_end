@@ -1,6 +1,6 @@
 <template>
   <el-dialog v-dialogDrag title="图片库" :visible.sync="dialogVisible" width="840px" :close-on-click-modal="false" :show-close="false">
-    <el-container style="height: 450px; border: 1px solid #eee;border:none">
+    <el-container style="height: 450px; border: 1px solid #eee;border:none;line-height: 16px;">
       <el-aside class="img_menu" width="150px" style="font-size: 14px;padding: 0px;margin-top: 18px;background: white;">
         <div v-bind:class="{ img_menu_xuanzhong: searchSelectedGroup == -1 }" style="margin-left: 12px;cursor: pointer;" @click="selectGroup(-1)" :id="-1" @mouseover="changeActive($event)" @mouseout="removeActive($event)">全部图片</div>
         <div v-bind:class="{ img_menu_xuanzhong: searchSelectedGroup == 0 }" style="margin-left: 12px;cursor: pointer;" @click="selectGroup(0)" :id="0" @mouseover="changeActive($event)" @mouseout="removeActive($event)">未分组</div>
@@ -13,7 +13,7 @@
               <i class="el-icon-delete" />
             </a>
         </div>
-        <div style="margin-left: 12px;" @click="newGroup()"><a>新增分组</a></div>
+        <div style="margin-left: 12px;text-decoration: underline;" @click="newGroup()"><a>新增分组</a></div>
       </el-aside>
 
       <!-- 中间部分 -->
@@ -28,7 +28,7 @@
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item disabled>请选择分组</el-dropdown-item>
-                  <el-dropdown-item command="1">黄金糕</el-dropdown-item>
+                  <el-dropdown-item :command="item.id" v-for="(item, key) in groupList" :id="item.id" :key="key">{{ item.name }}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <el-button type="danger" @click="delImgs" size="mini">删除</el-button>
@@ -58,15 +58,18 @@
         <!-- 中间部分 -->
         <!-- 顶部的页码 -->
         <el-footer style="height: 40px;text-align: center;">
+          <div class="block">
+          <pagination
+            style="margin-top: 20px"
+            v-show="total>0"
+            :total="total"
+            small
+            :page.sync="pageIndex"
+            :limit.sync="pageSize"
+            @pagination="getImgsList"
+          />
+        </div>
           <!-- 页码 -->
-          <div style="margin: 5px; ">
-            <div class="pageClass" style="margin-right: 30px;">
-              <i class="el-icon-d-arrow-right" style="padding: 5px;" />
-            </div>
-            <div class="pageClass" style="margin-left: 20px;">
-              <i class="el-icon-d-arrow-left" style="padding: 5px;" />
-            </div>
-          </div>
         </el-footer>
         <!-- 顶部的页码 -->
       </el-container>

@@ -8,21 +8,24 @@ import { encrypt, decrypt } from '@/common/encryption/crypto.js'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 5000000 // request timeout
 })
+
+let head = document.getElementsByTagName('head');
+let meta = document.createElement('meta');
+meta.name = 'referrer';
+//根据实际情况修改referrer的值，可选值参考上文
+meta.content = 'origin';
+head[0].appendChild(meta);
 
 // request interceptor
 service.interceptors.request.use(
   config => {
     // do something before request is sent
     config.headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     }
-
-    if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
+    if (getToken()) {
       config.headers['Authorization'] = 'Bearer ' + getToken()
     }
     return config

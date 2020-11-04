@@ -8,19 +8,19 @@ const systemRouter = {
   redirect: '',
   name: 'System',
   meta: {
-    title: '系统设置',
+    title: '系统模块',
     icon: 'system'
   },
   children: [
-    {
-      path: 'system-commonParameter',
-      component: () => import('@/views/system/commonParameter/index'),
-      name: 'CommonParameter',
-      meta: { title: '公共参数配置' }
-    },
+    // {
+    //   path: 'system-commonParameter',
+    //   component: () => import('@/views/system/commonParameter/index'),
+    //   name: 'CommonParameter',
+    //   meta: { title: '公共参数配置' }
+    // },
     {
       path: 'system-secretKeyList',
-      component: () => import('@/views/system/secretKeyList/index'),
+      component: () => import('@/views/system/secretkeylist/index'),
       name: 'secretKeyList',
       meta: { title: '秘钥列表' }
     },
@@ -33,7 +33,11 @@ const systemRouter = {
     {
       path: 'system-website',
       component: () => import('@/views/system/website/index'),
+<<<<<<< HEAD
       name: 'Website',
+=======
+      name: 'website',
+>>>>>>> 1e9043f19b284eb0f746b9517d396c68d02b549d
       meta: { title: '网站设置' }
     }
   ]

@@ -70,12 +70,6 @@
         <span v-else>登 录 中...</span>
       </el-button>
 
-      <el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button>
-      <ImgLibrary
-        :dialog-visible="dialogVisible"
-        @changeDialogVisible="changeDialogVisible"
-      />
-
     </el-form>
   </div>
 </template>
@@ -85,14 +79,12 @@ import './directives.js'
 import { getCodeImg } from '@/api/common/login'
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
-import ImgLibrary from '@/components/ImgLibrary'
 
 export default {
   name: 'Login',
-  components: { SocialSign, ImgLibrary },
+  components: { SocialSign },
   data() {
     return {
-      dialogVisible: false,
       //  新做
       codeUrl: '',
       loginForm: {
@@ -140,10 +132,6 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-    changeDialogVisible(val) {
-      this.dialogVisible = false
-      console.log(val)
-    },
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
