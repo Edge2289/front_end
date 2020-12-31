@@ -8,8 +8,7 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import systemRouter from './modules/system'
-import logMethod from './modules/logMethod'
-
+// import logMethod from './modules/logMethod'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -89,7 +88,7 @@ export const constantRoutes = [
         path: 'monitor',
         component: () => import('@/views/dashboard/monitor'),
         name: 'Monitor',
-        meta: { title: '监控页', icon: 'international'}
+        meta: { title: '监控页', icon: 'international' }
       },
       {
         path: 'workplace',
@@ -149,7 +148,7 @@ export const asyncRoutes = [
         component: () => import('@/views/blogService/common/index'),
         name: 'BlogSeo',
         redirect: '/blogService/common/index',
-        meta: { title: '基础信息'},
+        meta: { title: '基础信息' },
         children: [
           {
             path: 'homeTab',
@@ -170,7 +169,7 @@ export const asyncRoutes = [
         component: () => import('@/views/blogService/subject/index'),
         name: 'BlogSeo',
         redirect: '/blogService/subject/index',
-        meta: { title: '主体信息'},
+        meta: { title: '主体信息' },
         children: [
           {
             path: 'tabList',
@@ -198,7 +197,7 @@ export const asyncRoutes = [
             meta: { title: '文章列表', icon: 'list' }
           }
         ]
-      },
+      }
     ]
   },
   {
@@ -216,7 +215,7 @@ export const asyncRoutes = [
         component: () => import('@/views/seo/blog_seo/index'),
         name: 'BlogSeo',
         redirect: '/seo/blog_seo/index',
-        meta: { title: '博客SEO'},
+        meta: { title: '博客SEO' },
         children: [
           {
             path: 'baidu_seo',
@@ -235,7 +234,7 @@ export const asyncRoutes = [
     ]
   },
   // 日志列表 ---START
-  logMethod,
+  // logMethod,
   // 日志列表 ---END
   {
     path: '/server',
@@ -263,7 +262,7 @@ export const asyncRoutes = [
   },
   /** 系统模块 **/
   systemRouter,
-  
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

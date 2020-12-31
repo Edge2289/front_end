@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import './directives.js'
 import { getCodeImg } from '@/api/common/login'
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'

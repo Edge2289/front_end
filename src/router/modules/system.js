@@ -33,11 +33,7 @@ const systemRouter = {
     {
       path: 'system-website',
       component: () => import('@/views/system/website/index'),
-<<<<<<< HEAD
-      name: 'Website',
-=======
       name: 'website',
->>>>>>> 1e9043f19b284eb0f746b9517d396c68d02b549d
       meta: { title: '网站设置' }
     }
   ]

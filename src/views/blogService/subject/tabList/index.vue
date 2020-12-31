@@ -115,7 +115,7 @@
         </el-form-item>
         <el-form-item label="标签颜色">
           <!-- <el-input v-model="form.roleKey" placeholder="请输入权限字符" :disabled="isEdit" /> -->
-          <el-color-picker v-model="form.color" size="medium"></el-color-picker>
+          <el-color-picker v-model="form.color" size="medium" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.is_state">
@@ -137,12 +137,12 @@
 </template>
 
 <script>
-import { getLabel, putLabel, addLabel, delLabel} from '@/api/article/article'
+import { getLabel, putLabel, addLabel, delLabel } from '@/api/article/article'
 import { dialogDrag } from '@/utils/directives'
 import c from '@/components/ImgLibrary/c'
 
 export default {
-  name: 'tab',
+  name: 'Tab',
   data() {
     return {
       // 遮罩层
@@ -168,38 +168,38 @@ export default {
       dateRange: [],
       // 搜索状态数据字典
       statusOptions: [{
-            'dictValue': -1,
-            'dictLabel': "全部"
-        },{
-            'dictValue': 1,
-            'dictLabel': "开启"
-        },{
-            'dictValue': 0,
-            'dictLabel': "关闭"
-        }],
-        // 新增
+        'dictValue': -1,
+        'dictLabel': '全部'
+      }, {
+        'dictValue': 1,
+        'dictLabel': '开启'
+      }, {
+        'dictValue': 0,
+        'dictLabel': '关闭'
+      }],
+      // 新增
       addStatusOptions: [{
-            'dictValue': 1,
-            'dictLabel': "开启"
-        },{
-            'dictValue': 0,
-            'dictLabel': "关闭"
-        }],
+        'dictValue': 1,
+        'dictLabel': '开启'
+      }, {
+        'dictValue': 0,
+        'dictLabel': '关闭'
+      }],
       // 查询参数
       queryParams: {
         page: 1,
         page_size: 10,
-        label: "",
-        is_state: -1,
+        label: '',
+        is_state: -1
       },
       // 表单参数
       form: {
-        is_state: 0,
+        is_state: 0
       },
       defaultProps: {
         children: 'children',
         label: 'label'
-      },
+      }
     }
   },
   created() {
@@ -211,22 +211,22 @@ export default {
       this.loading = true
       getLabel(this.queryParams).then(
         response => {
-          this.loading = false;
-          this.total = response.data.count;
-          let tab_list = [];
+          this.loading = false
+          this.total = response.data.count
+          const tab_list = []
           response.data.list.forEach((item, index) => {
-              tab_list[index] = {
-                "tab_id": item.id, 
-                "tab_name": item.label, 
-                "tab_color": item.color, 
-                "is_state": item.is_state, 
-                "operator_name": item.OperatorName, 
-                "created_at": item.createTime
-                };
+            tab_list[index] = {
+              'tab_id': item.id,
+              'tab_name': item.label,
+              'tab_color': item.color,
+              'is_state': item.is_state,
+              'operator_name': item.OperatorName,
+              'created_at': item.createTime
+            }
           }
-        )
-        this.tab_list = tab_list;
-      })
+          )
+          this.tab_list = tab_list
+        })
     },
     // 标签状态修改
     handleStatusChange(row) {
@@ -237,11 +237,11 @@ export default {
         type: 'warning'
       }).then(function() {
         putLabel({
-            "label": row.tab_name,
-            "color": row.tab_color,
-            "is_state": row.is_state,
-            "id": row.tab_id,
-          })      
+          'label': row.tab_name,
+          'color': row.tab_color,
+          'is_state': row.is_state,
+          'id': row.tab_id
+        })
       }).catch(function() {
         row.is_state = row.is_state == 0 ? 1 : 0
       })
@@ -259,8 +259,8 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        label: "",
-        color: "",
+        label: '',
+        color: '',
         is_state: -1
       }
     //   this.resetForm('form')
@@ -272,10 +272,10 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.page = 1;
-      this.queryParams.page_size = 10;
-      this.queryParams.label = '';
-      this.queryParams.is_state = -1;
+      this.queryParams.page = 1
+      this.queryParams.page_size = 10
+      this.queryParams.label = ''
+      this.queryParams.is_state = -1
       this.handleQuery()
     },
     // 多选框选中数据
@@ -295,37 +295,37 @@ export default {
     handleUpdate(row) {
       this.reset()
       const tabIds = row.tab_id || this.ids[0]
-        getLabel({"id": tabIds,"is_state": -1}).then(response => {
-          this.form.label = response.data.list[0].label;
-          this.form.is_state = response.data.list[0].is_state;
-          this.form.color = response.data.list[0].color;
-          this.form.id = response.data.list[0].id;
-        })
-        this.open = true
-        this.title = '修改标签'
-        this.isEdit = false
+      getLabel({ 'id': tabIds, 'is_state': -1 }).then(response => {
+        this.form.label = response.data.list[0].label
+        this.form.is_state = response.data.list[0].is_state
+        this.form.color = response.data.list[0].color
+        this.form.id = response.data.list[0].id
+      })
+      this.open = true
+      this.title = '修改标签'
+      this.isEdit = false
     //   })
     },
     /** 提交按钮 */
     submitForm: function() {
-      console.log("this.form", this.form);
-      let requestHeader = "";
-      if(this.form.id !== undefined) {
-        requestHeader = putLabel(this.form);
+      console.log('this.form', this.form)
+      let requestHeader = ''
+      if (this.form.id !== undefined) {
+        requestHeader = putLabel(this.form)
       } else {
         requestHeader = addLabel(this.form)
       }
       requestHeader.then(response => {
         if (response.code == 200) {
-              this.open = false
-              this.$message({
-                message: response.msg,
-                type: 'success'
-              });
-            } else {
-              this.$message.error(response.msg);
-            }
-          this.getList()
+          this.open = false
+          this.$message({
+            message: response.msg,
+            type: 'success'
+          })
+        } else {
+          this.$message.error(response.msg)
+        }
+        this.getList()
       })
     },
 
@@ -338,7 +338,7 @@ export default {
         type: 'warning'
       }).then(function() {
         delLabel({
-          "id": tab_ids
+          'id': tab_ids
         }).then(response => {
           console.log(response.data)
         })
@@ -346,7 +346,7 @@ export default {
         this.getList()
         this.msgSuccess('删除成功')
       }).catch(function() {})
-    },
+    }
   }
 }
 </script>

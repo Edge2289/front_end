@@ -38,12 +38,12 @@ export default {
       dateRange: [],
       // 状态数据字典
       statusOptions: [{
-            'dictValue': 1,
-            'dictLabel': "开启"
-        },{
-            'dictValue': 0,
-            'dictLabel': "关闭"
-        }],
+        'dictValue': 1,
+        'dictLabel': '开启'
+      }, {
+        'dictValue': 0,
+        'dictLabel': '关闭'
+      }],
       // 数据范围选项
       dataScopeOptions: [
         {
@@ -105,14 +105,14 @@ export default {
   methods: {
     /** 查询标签列表 */
     getList() {
-        this.tab_list = [
-          {"tab_id":1, "tab_name": "天蓝色", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":2, "tab_name": "天蓝色aa", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":3, "tab_name": "天蓝色ss", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"tab_id":4, "tab_name": "天蓝色dd", "tab_color": "red", "is_state": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-          
-        ]
-        this.total = 10
+      this.tab_list = [
+        { 'tab_id': 1, 'tab_name': '天蓝色', 'tab_color': 'red', 'is_state': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' },
+        { 'tab_id': 2, 'tab_name': '天蓝色aa', 'tab_color': 'red', 'is_state': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' },
+        { 'tab_id': 3, 'tab_name': '天蓝色ss', 'tab_color': 'red', 'is_state': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' },
+        { 'tab_id': 4, 'tab_name': '天蓝色dd', 'tab_color': 'red', 'is_state': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' }
+
+      ]
+      this.total = 10
     //   this.loading = true
     //   listRole(this.addDateRange(this.queryParams, this.dateRange)).then(
     //     response => {
@@ -131,7 +131,7 @@ export default {
     // 标签状态修改
     handleStatusChange(row) {
       const text = row.is_state === '0' ? '启用' : '停用'
-      console.log("row.is_state", row.is_state)
+      console.log('row.is_state', row.is_state)
       this.$confirm('确认要"' + text + '""' + row.tab_name + '"标签吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -179,7 +179,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = []
-    //   this.resetForm('queryForm')
+      //   this.resetForm('queryForm')
       this.handleQuery()
     },
     // 多选框选中数据
@@ -199,11 +199,11 @@ export default {
     handleUpdate(row) {
       this.reset()
       const roleId = row.roleId || this.ids
-    //   getRole(roleId).then(response => {
-    //     this.form = response.data
-        this.open = true
-        this.title = '修改标签'
-        this.isEdit = true
+      //   getRole(roleId).then(response => {
+      //     this.form = response.data
+      this.open = true
+      this.title = '修改标签'
+      this.isEdit = true
     //   })
     },
     /** 提交按钮 */
@@ -265,7 +265,7 @@ export default {
         this.getList()
         this.msgSuccess('删除成功')
       }).catch(function() {})
-    },
+    }
     /** 导出按钮操作 */
     // handleExport() {
     //   this.$confirm('是否确认导出所有标签数据项?', '警告', {

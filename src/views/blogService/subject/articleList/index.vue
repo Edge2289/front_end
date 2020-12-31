@@ -6,12 +6,12 @@
         <div class="head-container">
           <el-input
             v-model="cateName"
-            @keyup.enter.native="getCareselect"
             placeholder="请输入分类名称"
             clearable
             size="small"
             prefix-icon="el-icon-search"
             style="margin-bottom: 20px"
+            @keyup.enter.native="getCareselect"
           />
         </div>
         <div class="head-container">
@@ -64,8 +64,8 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery" plain>搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" plain>重置</el-button>
+            <el-button type="primary" icon="el-icon-search" size="mini" plain @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" size="mini" plain @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
 
@@ -108,10 +108,10 @@
           <el-table-column label="文章名称" align="center" prop="title" :show-overflow-tooltip="true" />
           <el-table-column label="文章作者" align="center" prop="nick" :show-overflow-tooltip="true" />
           <el-table-column label="文章配图">
-        　　<template slot-scope="scope">
-        　　　　<img :src="scope.row.img" width="40" height="40" class="head_pic"/>
-        　　</template>
-        </el-table-column>
+            　　<template slot-scope="scope">
+              　　　　<img :src="scope.row.img" width="40" height="40" class="head_pic">
+            　　</template>
+          </el-table-column>
           <el-table-column label="文章分类" align="center" prop="cate_id" width="120" />
           <el-table-column label="点赞数" align="center" prop="click_num" width="120" />
           <el-table-column label="总阅读量" align="center" prop="read_num" width="120" />
@@ -168,11 +168,11 @@
 </template>
 
 <script>
-import { getArticleList, delArticle, updateArticle, getLabel} from '@/api/article/article';
-import { getCategory } from '@/api/article/category';
-import { getToken } from '@/utils/auth';
-import Treeselect from '@riophae/vue-treeselect';
-import '@riophae/vue-treeselect/dist/vue-treeselect.css';
+import { getArticleList, delArticle, updateArticle, getLabel } from '@/api/article/article'
+import { getCategory } from '@/api/article/category'
+import { getToken } from '@/utils/auth'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
   name: 'User',
   components: { Treeselect },
@@ -200,15 +200,15 @@ export default {
       cateName: undefined,
       // 状态数据字典
       statusOptions: [{
-            'dictValue': 1,
-            'dictLabel': "开启"
-        },{
-            'dictValue': 0,
-            'dictLabel': "关闭"
-        },{
-            'dictValue': -1,
-            'dictLabel': "全部"
-        }],
+        'dictValue': 1,
+        'dictLabel': '开启'
+      }, {
+        'dictValue': 0,
+        'dictLabel': '关闭'
+      }, {
+        'dictValue': -1,
+        'dictLabel': '全部'
+      }],
       // 表单参数
       form: {},
       defaultProps: {
@@ -223,13 +223,13 @@ export default {
         title: '',
         is_state: -1,
         cate_id: 0
-      },
+      }
     }
   },
   watch: {
     // 根据名称筛选分类树
     cateName(val) {
-      this.getCareselect();
+      this.getCareselect()
     }
   },
   created() {
@@ -239,23 +239,23 @@ export default {
   methods: {
     /** 查询用户列表 */
     getList() {
-      this.loading = true;
+      this.loading = true
       getArticleList(this.queryParams).then(
         response => {
           this.articleList = response.data.list
           this.total = response.data.count
-          this.loading = false;
-          console.log("response.data", response.data);
+          this.loading = false
+          console.log('response.data', response.data)
         }
       )
     },
     /** 查询分类下拉树结构 */
     getCareselect() {
       getCategory({
-        "page": 1,
-        "page_sieze": 1000,
-        "is_state": 1,
-        "name": this.cateName == undefined ? '': this.cateName
+        'page': 1,
+        'page_sieze': 1000,
+        'is_state': 1,
+        'name': this.cateName == undefined ? '' : this.cateName
       }).then(response => {
         this.cateOptions = response.data.list
       })
@@ -299,7 +299,7 @@ export default {
         postIds: undefined,
         roleIds: undefined
       }
-      this.getList();
+      this.getList()
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -326,13 +326,13 @@ export default {
     },
     /** 删除操作 */
     handleDelete(row) {
-      
+
     },
     /** 更新操作 */
     handleUpdate(row) {
-      let id = row.id || this.ids[0]
-      this.$router.push({ path: '/subject/articleEdit?articleId='+ id, query: this.otherQuery })
-    },
+      const id = row.id || this.ids[0]
+      this.$router.push({ path: '/subject/articleEdit?articleId=' + id, query: this.otherQuery })
+    }
   }
 }
 </script>
