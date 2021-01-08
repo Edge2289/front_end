@@ -21,13 +21,11 @@ import * as filters from './filters' // global filters
 
 import Pagination from '@/components/Pagination'
 
-
 // 全局组件挂载
 //
 // 分頁組件
 //
 Vue.component('Pagination', Pagination)
-
 
 /**
  * If you don't want to use mock-server

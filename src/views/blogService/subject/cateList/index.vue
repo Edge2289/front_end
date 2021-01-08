@@ -28,7 +28,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery" plain>搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" plain @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -111,13 +111,13 @@
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="分类名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入分类名称"/>
+          <el-input v-model="form.name" placeholder="请输入分类名称" />
         </el-form-item>
         <el-form-item label="分类備注" prop="note">
           <el-input v-model="form.note" placeholder="请输入分类備注" />
         </el-form-item>
         <el-form-item label="權重" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入權重"/>
+          <el-input v-model="form.sort" placeholder="请输入權重" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.is_state">
@@ -154,7 +154,7 @@
 </template>
 
 <script>
-import { getCategory, putCategory, addCategory, delCategory} from '@/api/article/category'
+import { getCategory, putCategory, addCategory, delCategory } from '@/api/article/category'
 // import { treeselect as menuTreeselect, roleMenuTreeselect } from '@/api/system/menu'
 // import { treeselect as deptTreeselect, roleDeptTreeselect } from '@/api/system/dept'
 // import { formatJson } from '@/utils'
@@ -185,21 +185,21 @@ export default {
       dateRange: [],
       // 状态数据字典
       statusOptions: [{
-            'dictValue': -1,
-            'dictLabel': "全部"
-        },{
-            'dictValue': 1,
-            'dictLabel': "开启"
-        },{
-            'dictValue': 0,
-            'dictLabel': "关闭"
-        }],
+        'dictValue': -1,
+        'dictLabel': '全部'
+      }, {
+        'dictValue': 1,
+        'dictLabel': '开启'
+      }, {
+        'dictValue': 0,
+        'dictLabel': '关闭'
+      }],
       // 查询参数
       queryParams: {
         page: 1,
         page_size: 10,
         name: undefined,
-        is_state: -1,
+        is_state: -1
       },
       // 表单参数
       form: {
@@ -234,30 +234,30 @@ export default {
     /** 查询标签列表 */
     getList() {
       // this.loading = true;
-      let than = this;
+      const than = this
       getCategory(this.queryParams).then(
         response => {
           // than.loading = false;
-          this.total = response.data.count;
-          let tab_list = [];
+          this.total = response.data.count
+          const tab_list = []
           response.data.list.forEach((item, index) => {
-              tab_list[index] = {
-                "tab_id": item.id, 
-                "tab_name": item.name, 
-                "tab_note": item.note, 
-                "is_state": item.is_state, 
-                "operator_name": item.OperatorName, 
-                "created_at": item.createTime
-                };
+            tab_list[index] = {
+              'tab_id': item.id,
+              'tab_name': item.name,
+              'tab_note': item.note,
+              'is_state': item.is_state,
+              'operator_name': item.OperatorName,
+              'created_at': item.createTime
+            }
           }
-        )
-        this.tab_list = tab_list;
-      })
+          )
+          this.tab_list = tab_list
+        })
     },
     // 标签状态修改
     handleStatusChange(row) {
       const text = row.is_state === '0' ? '启用' : '停用'
-      console.log("row.is_state", row.is_state)
+      console.log('row.is_state', row.is_state)
       this.$confirm('确认要"' + text + '""' + row.tab_name + '"标签吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -304,7 +304,7 @@ export default {
       this.title = '添加分类'
       this.isEdit = false
       this.form = {
-        id: "",
+        id: '',
         is_state: 1,
         is_home: 1,
         name: '',
@@ -316,7 +316,7 @@ export default {
     handleUpdate(row) {
       this.reset()
       const cateId = row.tab_id || this.ids[0]
-      getCategory({"id" : cateId, "is_state" : -1}).then(
+      getCategory({ 'id': cateId, 'is_state': -1 }).then(
         response => {
           this.form = {
             id: response.data.list[0].id,
@@ -324,34 +324,34 @@ export default {
             note: response.data.list[0].note,
             is_state: response.data.list[0].is_state,
             is_home: response.data.list[0].is_home,
-            sort: response.data.list[0].sort,
+            sort: response.data.list[0].sort
           }
         }
       )
-        this.open = true
-        this.title = '修改分类'
-        this.isEdit = false
+      this.open = true
+      this.title = '修改分类'
+      this.isEdit = false
     },
     /** 提交按钮 */
     submitForm: function() {
-      console.log("this.form", this.form)
-      let method = putCategory;
+      console.log('this.form', this.form)
+      let method = putCategory
       if (this.form.id == '') {
-        method = addCategory;
-        delete this.form.id;
+        method = addCategory
+        delete this.form.id
       }
       this.form.sort = parseInt(this.form.sort)
       method(this.form).then(
         response => {
-            if (response.code == 200) {
-              this.open = false
-              this.$message({
-                message: response.msg,
-                type: 'success'
-              });
-            } else {
-              this.$message.error(response.msg);
-            }
+          if (response.code == 200) {
+            this.open = false
+            this.$message({
+              message: response.msg,
+              type: 'success'
+            })
+          } else {
+            this.$message.error(response.msg)
+          }
           this.getList()
         }
       )
@@ -359,7 +359,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const tab_ids = row.tab_id || this.ids
-      console.log("tab_ids", tab_ids);
+      console.log('tab_ids', tab_ids)
       this.$confirm('是否确认删除标签: ' + row.tab_name + ' ?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -370,7 +370,7 @@ export default {
         this.getList()
         this.msgSuccess('删除成功')
       }).catch(function() {})
-    },
+    }
   }
 }
 </script>

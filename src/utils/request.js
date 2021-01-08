@@ -11,19 +11,19 @@ const service = axios.create({
   timeout: 5000000 // request timeout
 })
 
-let head = document.getElementsByTagName('head');
-let meta = document.createElement('meta');
-meta.name = 'referrer';
-//根据实际情况修改referrer的值，可选值参考上文
-meta.content = 'origin';
-head[0].appendChild(meta);
+const head = document.getElementsByTagName('head')
+const meta = document.createElement('meta')
+meta.name = 'referrer'
+// 根据实际情况修改referrer的值，可选值参考上文
+meta.content = 'origin'
+head[0].appendChild(meta)
 
 // request interceptor
 service.interceptors.request.use(
   config => {
     // do something before request is sent
     config.headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
     if (getToken()) {
       config.headers['Authorization'] = 'Bearer ' + getToken()

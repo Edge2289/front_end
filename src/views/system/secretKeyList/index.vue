@@ -142,7 +142,7 @@
           <el-input v-model="form.app_secret" placeholder="自动生成,请勿填写" :disabled="true" />
         </el-form-item>
         <el-form-item label="描述" prop="app_desc">
-          <el-input v-model="form.app_desc" placeholder="请输入密钥名称"/>
+          <el-input v-model="form.app_desc" placeholder="请输入密钥名称" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -160,7 +160,6 @@
       </div>
     </el-dialog>
 
-
     <!-- 分页 -->
     <!-- <div style="margin-top: 20px;text-align: center;">
       <el-pagination
@@ -173,7 +172,7 @@
         :total="total">
       </el-pagination>
     </div> -->
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -218,12 +217,12 @@ export default {
       dateRange: [],
       // 状态数据字典
       statusOptions: [{
-            'dictValue': 1,
-            'dictLabel': "开启"
-        },{
-            'dictValue': 0,
-            'dictLabel': "关闭"
-        }],
+        'dictValue': 1,
+        'dictLabel': '开启'
+      }, {
+        'dictValue': 0,
+        'dictLabel': '关闭'
+      }],
       // 菜单列表
       menuOptions: [],
       // 部门列表
@@ -238,7 +237,7 @@ export default {
       },
       // 表单参数
       form: {
-        status: 1,
+        status: 1
       },
       defaultProps: {
         children: 'children',
@@ -261,14 +260,14 @@ export default {
   methods: {
     /** 查询密钥列表 */
     getList() {
-        this.tab_list = [
-         {"id":1, "app_name": "天蓝色", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"id":2, "app_name": "天蓝色aa", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"id":3, "app_name": "天蓝色ss", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-         {"id":4, "app_name": "天蓝色dd", "app_id": "red", "app_secret": "red", "app_desc": "red", "status": 1, "operator_name": "", "created_at": "2020-07-15 02:02:03"},
-          
-        ]
-        this.total = 10
+      this.tab_list = [
+        { 'id': 1, 'app_name': '天蓝色', 'app_id': 'red', 'app_secret': 'red', 'app_desc': 'red', 'status': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' },
+        { 'id': 2, 'app_name': '天蓝色aa', 'app_id': 'red', 'app_secret': 'red', 'app_desc': 'red', 'status': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' },
+        { 'id': 3, 'app_name': '天蓝色ss', 'app_id': 'red', 'app_secret': 'red', 'app_desc': 'red', 'status': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' },
+        { 'id': 4, 'app_name': '天蓝色dd', 'app_id': 'red', 'app_secret': 'red', 'app_desc': 'red', 'status': 1, 'operator_name': '', 'created_at': '2020-07-15 02:02:03' }
+
+      ]
+      this.total = 10
     //   this.loading = true
     //   listRole(this.addDateRange(this.queryParams, this.dateRange)).then(
     //     response => {
@@ -285,15 +284,15 @@ export default {
       })
     },
     handleSizeChange() {
-      console.log("handleSizeChange", "handleSizeChange");
+      console.log('handleSizeChange', 'handleSizeChange')
     },
     handleCurrentChange() {
-      console.log("handleCurrentChange", "handleCurrentChange");
+      console.log('handleCurrentChange', 'handleCurrentChange')
     },
     // 密钥状态修改
     handleStatusChange(row) {
       const text = row.status === '0' ? '启用' : '停用'
-      console.log("row.status", row.status)
+      console.log('row.status', row.status)
       this.$confirm('确认要"' + text + '""' + row.app_name + '"密钥吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -341,7 +340,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = []
-    //   this.resetForm('queryForm')
+      //   this.resetForm('queryForm')
       this.handleQuery()
     },
     // 多选框选中数据
@@ -360,10 +359,10 @@ export default {
     handleUpdate(row) {
       this.reset()
       const roleId = row.roleId || this.ids
-    //   getRole(roleId).then(response => {
-    //     this.form = response.data
-        this.open = true
-        this.title = '修改密钥'
+      //   getRole(roleId).then(response => {
+      //     this.form = response.data
+      this.open = true
+      this.title = '修改密钥'
     //   })
     },
     /** 提交按钮 */
@@ -425,7 +424,7 @@ export default {
         this.getList()
         this.msgSuccess('删除成功')
       }).catch(function() {})
-    },
+    }
     /** 导出按钮操作 */
     // handleExport() {
     //   this.$confirm('是否确认导出所有密钥数据项?', '警告', {

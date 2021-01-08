@@ -35,10 +35,9 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password, uuid, code } = userInfo
     return new Promise((resolve, reject) => {
-      
-      let data = {
-        "LoginName" : 1,
-        "Name" : 1,
+      const data = {
+        'LoginName': 1,
+        'Name': 1
       }
 
       

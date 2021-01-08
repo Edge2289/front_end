@@ -28,6 +28,6 @@ export const ApiUrl = {
   addCate: 'api/blog/v1/article/cate', // 獲取文章
 
   // 文章label分類
-  getLabel: 'api/blog/v1/article/label', // 獲取文章
-  
+  getLabel: 'api/blog/v1/article/label' // 獲取文章
+
 }
