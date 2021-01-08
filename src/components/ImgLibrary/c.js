@@ -214,9 +214,11 @@
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isJPG) {
           this.$message.error("上传产品图片只能是 JPG/PNG/JPEG 格式!");
+          return
         }
         if (!isLt2M) {
           this.$message.error("上传产品图片大小不能超过 2MB!")
+          return
         }
         // 创建一个HTML5的FileReader对象
         var reader = new FileReader()
@@ -349,7 +351,7 @@
           ids[key] = item.id;
         })
         mvImgs({
-          "ids": ids.join(","),
+          "ids": ids,
           "cate_id": command
         }).then(res => {
           if (res.code != 200) {
