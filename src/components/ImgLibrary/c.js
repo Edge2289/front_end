@@ -39,7 +39,10 @@ export default {
       // 页码 默认为1开始 pageSize = 20
       pageIndex: 1,
       pageSize: 10,
-      total: 20
+      total: 20,
+
+      // 按钮控件
+      newEditGroupTextLoadingbut: false
     }
   },
   mounted() { },
@@ -110,19 +113,20 @@ export default {
     },
     // 新增分组请求
     groupNewEdit() {
-      if (this.newEditGroupText == '' || this.newEditGroupText == undefined) {
+      if (this.newEditGroupText.trim() == '' || this.newEditGroupText == undefined) {
         this.$message.error('分组名称为空')
         return
       }
-      this.innerVisible = false
 
       let requestObj = addGroupText
       if (this.newEditGroupId != 0) {
         requestObj = updateGroupText
       }
       /**
-         * 请求体
-         */
+      * 请求体
+      */
+     
+     this.newEditGroupTextLoadingbut = true;
       requestObj({
         'id': this.newEditGroupId,
         'name': this.newEditGroupText,
@@ -132,11 +136,13 @@ export default {
           this.$message.error(res.msg)
           return
         }
+        this.newEditGroupTextLoadingbut = false;
+        this.innerVisible = false
+        this.$message({
+          message: '操作成功',
+          type: 'success'
+        })
         this.getGroupText()
-      })
-      this.$message({
-        message: '操作成功',
-        type: 'success'
       })
     },
     // 选中分组
@@ -197,16 +203,22 @@ export default {
       var that = this;
       // 获取文件对象
       let file = options.file;
+      let fielType = "";
       //判断图片类型
+      isJPG = false;
       if (
         file.type == "image/jpeg" ||
-        file.type == "image/png" ||
         file.type == "image/JPG"
       ) {
-        var isJPG = true;
-      } else {
-        isJPG = false;
+        fielType = "data:img/jpg;base64,"
+        var isJPG = true
       }
+
+      if ( file.type == "image/png" ) {
+        fielType = "data:img/png;base64,"
+        var isJPG = true
+      }
+      
       // 判断图片大小
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
@@ -227,49 +239,8 @@ export default {
       }
       reader.onload = e => {
         let base64Str = reader.result.split(",")[1]
-        img.src = e.target.result
-        // base64地址图片加载完毕后执行
-        img.onload = function () {
-          // 缩放图片需要的canvas（也可以在DOM中直接定义canvas标签，这样就能把压缩完的图片不转base64也能直接显示出来）
-          var canvas = document.createElement("canvas")
-          var context = canvas.getContext("2d")
-          // 图片原始尺寸
-          var originWidth = this.width
-          var originHeight = this.height
-          // 最大尺寸限制，可通过设置宽高来实现图片压缩程度
-          var maxWidth = 300
-          var maxHeight = 300
-          // 目标尺寸
-          var targetWidth = originWidth
-          var targetHeight = originHeight
-          // 图片尺寸超过最大尺寸的限制
-          if (originWidth > maxWidth || originHeight > maxHeight) {
-            if (originWidth / originHeight > maxWidth / maxHeight) {
-              // 更改宽度，按照宽度限定尺寸
-              targetWidth = maxWidth
-              targetHeight = Math.round(
-                maxWidth * (originHeight / originWidth)
-              )
-            } else {
-              targetHeight = maxHeight
-              targetWidth = Math.round(
-                maxHeight * (originWidth / originHeight)
-              )
-            }
-          }
-        }
-        // 对图片进行缩放
-        canvas.width = targetWidth
-        canvas.height = targetHeight
-        // 清除画布
-        context.clearRect(0, 0, targetWidth, targetHeight)
-        // 图片压缩
-        context.drawImage(img, 0, 0, targetWidth, targetHeight)
-        /* 第一个参数是创建的img对象；第二三个参数是左上角坐标，后面两个是画布区域宽高*/
-        // 压缩后的base64文件
-        var newUrl = canvas.toDataURL('image/jpeg', 0.92)
         uploadImg({
-          data: newUrl,
+          data: fielType + base64Str,
           cate_id: 0
         }).then(res => {
           if (res.code != 200) {
@@ -278,91 +249,91 @@ export default {
           that.getImgsList()
         })
       }
-    }
-  },
-  // 上传结果
-  handleAvatarSuccess() {
-    console.log('handleAvatarSuccess')
-  },
-  // 点击图片
-  clickImgs: function ($event) {
-    const imgurl = $event.currentTarget.getAttribute('imgurl')
-    const id = $event.currentTarget.getAttribute('id')
-    console.log('id', id)
-    /**
-       *  判断是选中还是取消选中
-       */
-    if ($event.currentTarget.className.indexOf('action') == -1) {
-      $event.currentTarget.className = 'block action' // 切换按钮样式
-      this.selectedImgs.push({ 'id': id, 'imgurl': imgurl })
-    } else {
-      $event.currentTarget.className = 'block' // 切换按钮样式
-      for (let i = 0; i < this.selectedImgs.length; i++) {
-        if (this.selectedImgs[i].id == id) {
-          this.selectedImgs.splice(i, 1)
-          break
+    },
+
+    // 上传结果
+    handleAvatarSuccess() {
+      console.log('handleAvatarSuccess')
+    },
+    // 点击图片
+    clickImgs: function ($event) {
+      const imgurl = $event.currentTarget.getAttribute('imgurl')
+      const id = $event.currentTarget.getAttribute('id')
+      /**
+         *  判断是选中还是取消选中
+         */
+      if ($event.currentTarget.className.indexOf('action') == -1) {
+        $event.currentTarget.className = 'block action' // 切换按钮样式
+        this.selectedImgs.push({ 'id': id, 'imgurl': imgurl })
+      } else {
+        $event.currentTarget.className = 'block' // 切换按钮样式
+        for (let i = 0; i < this.selectedImgs.length; i++) {
+          if (this.selectedImgs[i].id == id) {
+            this.selectedImgs.splice(i, 1)
+            break
+          }
         }
       }
-    }
-  },
+    },
 
-  // 移动图片
-  mvImgsGroup(command) {
-    if (this.selectedImgs == '' || this.selectedImgs == undefined) {
-      this.alertEmptyImgs()
-      return
-    }
-    const ids = []
-    this.selectedImgs.forEach(function (item, key) {
-      ids[key] = item.id
-    })
-    mvImgs({
-      "ids": ids,
-      "cate_id": command
-    }).then(res => {
-      if (res.code != 200) {
-        this.$message.error(res.message);
+    // 移动图片
+    mvImgsGroup(command) {
+      if (this.selectedImgs == '' || this.selectedImgs == undefined) {
+        this.alertEmptyImgs()
+        return
       }
-      this.getImgsList();
-    })
-  },
-  // 删除图片
-  delImgs() {
-    if (this.selectedImgs == '' || this.selectedImgs == undefined) {
-      this.alertEmptyImgs()
-      return
-    }
-    const ids = []
-    this.selectedImgs.forEach(function (item, key) {
-      ids[key] = item.id
-    })
-    delImgs({
-      'ids': ids.join(',')
-    }).then(res => {
-      if (res.code != 200) {
-        this.$message.error(res.message)
-      }
-      let ids = [];
+      const ids = []
       this.selectedImgs.forEach(function (item, key) {
-        ids[key] = item.id;
+        ids[key] = item.id
       })
+      mvImgs({
+        "ids": JSON.stringify(ids),
+        "cate_id": command
+      }).then(res => {
+        if (res.code != 200) {
+          this.$message.error(res.message);
+        }
+        this.getImgsList();
+      })
+    },
+    // 删除图片
+    delImgs() {
+      if (this.selectedImgs == '' || this.selectedImgs == undefined) {
+        this.alertEmptyImgs()
+        return
+      }
+      const ids = []
+      this.selectedImgs.forEach(function (item, key) {
+        ids[key] = item.id
+      })
+      delImgs({
+        'ids': JSON.stringify(ids)
+      }).then(res => {
+        if (res.code != 200) {
+          this.$message.error(res.message)
+        }
+        let ids = [];
+        this.selectedImgs.forEach(function (item, key) {
+          ids[key] = item.id;
+        })
+        this.$message({
+          "message": "操作成功",
+          "type": "success"
+        })
+        this.selectedImgs = [];
+      })
+    },
+    alertEmptyImgs(text) {
+      // 选中图片为空弹窗
+      const h = this.$createElement
+      text = text == undefined ? '失败信息' : text
+      console.log(text)
       this.$message({
-        "message": "操作成功",
-        "type": "success"
+        message: h('p', null, [
+          h('span', null, text),
+          h('i', { style: 'color: teal' }, '  没有选中的图片')
+        ])
       })
-      this.selectedImgs = [];
-    })
+    }
   },
-  alertEmptyImgs(text) {
-    // 选中图片为空弹窗
-    const h = this.$createElement
-    text = text == undefined ? '失败信息' : text
-    console.log(text)
-    this.$message({
-      message: h('p', null, [
-        h('span', null, text),
-        h('i', { style: 'color: teal' }, '  没有选中的图片')
-      ])
-    })
-  }
 }

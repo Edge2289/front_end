@@ -84,7 +84,7 @@
     <el-dialog v-dialogDrag width="290px" :title="GroupTextTitle" :visible.sync="innerVisible" append-to-body>
       <el-input v-model="newEditGroupText" style="margin: 20px;width: 250px;" />
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="groupNewEdit()">确 定</el-button>
+        <el-button type="primary" @click="groupNewEdit()" :loading="newEditGroupTextLoadingbut">确 定</el-button>
         <el-button @click="innerVisible = false">取 消</el-button>
       </span>
     </el-dialog>
