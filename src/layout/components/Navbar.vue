@@ -20,7 +20,7 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1600868946&di=63c76c8bcac420c1923391028a730487&src=http://a2.att.hudong.com/86/10/01300000184180121920108394217.jpg" class="user-avatar">
+          <img src="http://qiniuyunoss.uikiss.cn/bolg/upload/2021011215/1610434907461.png" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">

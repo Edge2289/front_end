@@ -33,13 +33,14 @@ export default {
       */
       selectedImgs: [],
       // 搜索选中的分组
-      searchSelectedGroup: '',
+      searchSelectedGroup: -1,
       // 上传
       uploadImg: {},
       // 页码 默认为1开始 pageSize = 20
       pageIndex: 1,
       pageSize: 10,
-      total: 20,
+      total: 0,
+      imgLoadingShow: true,
 
       // 按钮控件
       newEditGroupTextLoadingbut: false
@@ -48,7 +49,6 @@ export default {
   mounted() { },
   created() {
     this.getImgsList()
-    // this.getImgsList();
     /**
        * 页面加载初始执行
        *
@@ -56,14 +56,6 @@ export default {
        * 获取图片列表
        * 分页
        */
-    const url = 'https://dss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3342331525,3501514615&fm=85&app=92&f=JPEG?w=121&h=75&s=BA3BE04C8AA5F36C455785820300A09A'
-    for (var i = 0; i < 20; i++) {
-      this.imgList[i] = {
-        'id': i,
-        'url': url,
-        'name': 'name' + i
-      }
-    }
     this.getGroupText()
   },
   // 方法定义
@@ -72,23 +64,21 @@ export default {
     getImgsList() {
       getImgs({
         'cate_id': this.searchSelectedGroup,
-        'pageIndex': this.pageIndex,
-        'pageSize': this.pageSize
+        'page': this.pageIndex,
+        'page_size': this.pageSize
       }).then(res => {
-        // if (res != 200) {
-        //   this.$message.error(res.message);
-        //   return;
-        // }
         const imgList = []
-        res.data.list.forEach(function (item, index) {
+        res.data.data.forEach(function (item, index) {
           imgList[index] = {
             'id': item.id,
             'url': item.domain + item.url,
             'name': item.url
           }
         })
-        this.total = res.data.count
-        this.imgList = imgList
+        this.total = res.data.total
+        this.imgList = imgList;
+        this.imgLoadingShow = false;
+        
       })
     },
     // 获取分组
@@ -99,6 +89,10 @@ export default {
     },
     //状态以及 所选的图片地址
     dialogVisibleMethod(val) {
+      console.log("dialogVisibleMethod", val)
+      if (val == 0 ) {
+        this.selectedImgs = []
+      }
       this.$emit('changeDialogVisible', {
         status: val,
         selectedImgs: this.selectedImgs
@@ -203,30 +197,22 @@ export default {
       var that = this;
       // 获取文件对象
       let file = options.file;
-      let fielType = "";
       //判断图片类型
       isJPG = false;
       if (
         file.type == "image/jpeg" ||
-        file.type == "image/JPG"
+        file.type == "image/JPG" || file.type == "image/png"
       ) {
-        fielType = "data:img/jpg;base64,"
-        var isJPG = true
-      }
-
-      if ( file.type == "image/png" ) {
-        fielType = "data:img/png;base64,"
         var isJPG = true
       }
       
-      // 判断图片大小
-      const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
-        this.$message.error("上传产品图片只能是 JPG/PNG/JPEG 格式!");
+        this.msgError("上传产品图片只能是 JPG/PNG/JPEG 格式!");
         return
       }
-      if (!isLt2M) {
-        this.$message.error("上传产品图片大小不能超过 2MB!")
+      // 判断图片大小
+      if (!(file.size / 1024 / 1024 < 2)) {
+        this.msgError("上传产品图片大小不能超过 2MB!")
         return
       }
       // 创建一个HTML5的FileReader对象
@@ -238,14 +224,15 @@ export default {
         reader.readAsDataURL(file)
       }
       reader.onload = e => {
-        let base64Str = reader.result.split(",")[1]
         uploadImg({
-          data: fielType + base64Str,
+          data: e.target.result,
           cate_id: 0
         }).then(res => {
           if (res.code != 200) {
-            this.$message.error(res.message)
+            this.msgError(res.msg)
+            return
           }
+          this.msgSuccess(res.msg)
           that.getImgsList()
         })
       }
@@ -287,7 +274,7 @@ export default {
         ids[key] = item.id
       })
       mvImgs({
-        "ids": JSON.stringify(ids),
+        "id": ids.join(","),
         "cate_id": command
       }).then(res => {
         if (res.code != 200) {
@@ -307,7 +294,7 @@ export default {
         ids[key] = item.id
       })
       delImgs({
-        'ids': JSON.stringify(ids)
+        "id": ids.join(","),
       }).then(res => {
         if (res.code != 200) {
           this.$message.error(res.message)
@@ -316,11 +303,9 @@ export default {
         this.selectedImgs.forEach(function (item, key) {
           ids[key] = item.id;
         })
-        this.$message({
-          "message": "操作成功",
-          "type": "success"
-        })
+        this.msgSuccess("操作成功");
         this.selectedImgs = [];
+        this.getImgsList();
       })
     },
     alertEmptyImgs(text) {

@@ -277,14 +277,8 @@ export default {
     //     }
     //   )
     },
-    /** 查询部门树结构 */
-    getDeptTreeselect() {
-      deptTreeselect().then(response => {
-        this.deptOptions = response.data.list
-      })
-    },
     handleSizeChange() {
-      console.log('handleSizeChange', 'handleSizeChange')
+      console.log('handleSizeChangesd', 'handleSizeChange')
     },
     handleCurrentChange() {
       console.log('handleCurrentChange', 'handleCurrentChange')

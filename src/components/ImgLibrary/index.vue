@@ -43,7 +43,7 @@
           </el-row>
         </el-header>
 
-        <el-main>
+        <el-main v-loading="imgLoadingShow">
           <!-- one -->
           <div v-for="(imgItem, imgIndex) in imgList" :id="imgItem.id" :key="imgIndex" :imgUrl="imgItem.url" class="block" style="width: 23%; padding: 2px;" @click="clickImgs($event)">
             <div class="img-paixun">
@@ -61,7 +61,7 @@
           <div class="block">
             <pagination
               v-show="total>0"
-              style="margin-top: 20px"
+              style="margin-top: 20px;padding:30px 16px"
               :total="total"
               small
               :page.sync="pageIndex"

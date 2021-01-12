@@ -65,20 +65,20 @@
     <el-table v-loading="loading" :data="tab_list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="tab_id" />
       <el-table-column label="分类名称" prop="tab_name" width="120" />
-      <el-table-column label="分类備注" prop="tab_note" width="280" />
+      <el-table-column label="分类备注" prop="tab_note" width="280" />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.is_state"
-            active-value="0"
-            inactive-value="1"
+            :active-value="1"
+            :inactive-value="0"
             @change="handleStatusChange(scope.row)"
           />
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createdAt" width="180">
         <template slot-scope="scope">
-          <span>{{ scope.row.created_at }}</span>
+          <span>{{ scope.row.created_time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -113,34 +113,34 @@
         <el-form-item label="分类名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入分类名称" />
         </el-form-item>
-        <el-form-item label="分类備注" prop="note">
-          <el-input v-model="form.note" placeholder="请输入分类備注" />
+        <el-form-item label="分类备注" prop="note">
+          <el-input v-model="form.note" placeholder="请输入分类备注" />
         </el-form-item>
-        <el-form-item label="權重" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入權重" />
+        <el-form-item label="权重" prop="sort">
+          <el-input v-model="form.sort" placeholder="请输入权重" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.is_state">
             <el-radio
               :key="1"
               :label="1"
-            >開啓</el-radio>
+            >开启</el-radio>
             <el-radio
               :key="0"
               :label="0"
-            >關閉</el-radio>
+            >关闭</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="首頁顯示">
+        <el-form-item label="首页显示">
           <el-radio-group v-model="form.is_home">
             <el-radio
               :key="1"
               :label="1"
-            >開啓</el-radio>
+            >开启</el-radio>
             <el-radio
               :key="0"
               :label="0"
-            >關閉</el-radio>
+            >关闭</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -155,8 +155,7 @@
 
 <script>
 import { getCategory, putCategory, addCategory, delCategory } from '@/api/article/category'
-// import { treeselect as menuTreeselect, roleMenuTreeselect } from '@/api/system/menu'
-// import { treeselect as deptTreeselect, roleDeptTreeselect } from '@/api/system/dept'
+import qs from 'qs';
 // import { formatJson } from '@/utils'
 import { dialogDrag } from '@/utils/directives'
 
@@ -233,41 +232,46 @@ export default {
   methods: {
     /** 查询标签列表 */
     getList() {
-      // this.loading = true;
+      this.loading = true;
       const than = this
       getCategory(this.queryParams).then(
         response => {
-          // than.loading = false;
-          this.total = response.data.count
+          this.total = response.data.total
           const tab_list = []
-          response.data.list.forEach((item, index) => {
+          response.data.data.forEach((item, index) => {
             tab_list[index] = {
               'tab_id': item.id,
               'tab_name': item.name,
               'tab_note': item.note,
               'is_state': item.is_state,
-              'operator_name': item.OperatorName,
-              'created_at': item.createTime
+              'operator_name': item.operator_name,
+              'created_time': item.created_time
             }
           }
           )
           this.tab_list = tab_list
+          than.loading = false;
         })
     },
     // 标签状态修改
     handleStatusChange(row) {
-      const text = row.is_state === '0' ? '启用' : '停用'
-      console.log('row.is_state', row.is_state)
+      const text = row.is_state == '1' ? '启用' : '停用'
       this.$confirm('确认要"' + text + '""' + row.tab_name + '"标签吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(function() {
-        return changeRoleStatus(row.tab_id, row.is_state)
-      }).then(() => {
-        this.msgSuccess(text + '成功')
-      }).catch(function() {
+        return putCategory({
+            "id":row.tab_id, 
+            "is_state": row.is_state,
+            "name": row.tab_name,
+            "note": row.tab_note
+          })
+      }).then((response) => {
+        this.msgSuccess(response.msg)
+      }).catch(function(err) {
         row.is_state = row.is_state === '0' ? '1' : '0'
+        this.msgError("系统错误，操作失败")
       })
     },
     // 取消按钮
@@ -319,12 +323,12 @@ export default {
       getCategory({ 'id': cateId, 'is_state': -1 }).then(
         response => {
           this.form = {
-            id: response.data.list[0].id,
-            name: response.data.list[0].name,
-            note: response.data.list[0].note,
-            is_state: response.data.list[0].is_state,
-            is_home: response.data.list[0].is_home,
-            sort: response.data.list[0].sort
+            id: response.data.data[0].id,
+            name: response.data.data[0].name,
+            note: response.data.data[0].note,
+            is_state: response.data.data[0].is_state,
+            is_home: response.data.data[0].is_home,
+            sort: response.data.data[0].sort
           }
         }
       )
@@ -334,7 +338,6 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
-      console.log('this.form', this.form)
       let method = putCategory
       if (this.form.id == '') {
         method = addCategory
@@ -345,12 +348,9 @@ export default {
         response => {
           if (response.code == 200) {
             this.open = false
-            this.$message({
-              message: response.msg,
-              type: 'success'
-            })
+            this.msgSuccess(response.msg)
           } else {
-            this.$message.error(response.msg)
+            this.msgError(response.msg)
           }
           this.getList()
         }
@@ -358,18 +358,24 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const tab_ids = row.tab_id || this.ids
-      console.log('tab_ids', tab_ids)
-      this.$confirm('是否确认删除标签: ' + row.tab_name + ' ?', '警告', {
+      var array = [];
+      const tab_ids = [row.tab_id] || this.ids
+      let text = ""
+      if (row.tab_name != undefined) {
+        text = ": " + row.tab_name
+      }
+      this.$confirm('是否确认删除标签' + text + ' ?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(function() {
-        return delRole(tab_ids)
+        return delCategory({"id" : tab_ids.join(",")})
       }).then(() => {
         this.getList()
         this.msgSuccess('删除成功')
-      }).catch(function() {})
+      }).catch(function(err) {
+      })
+
     }
   }
 }

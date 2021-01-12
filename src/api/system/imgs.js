@@ -30,7 +30,7 @@ export function mvImgs(data) {
   return request({
     url: ApiUrl.mvImgs,
     method: 'put',
-    data
+    data: data
   })
 }
 
@@ -41,7 +41,7 @@ export function delImgs(data) {
   return request({
     url: ApiUrl.delImgs,
     method: 'delete',
-    data
+    params: data
   })
 }
 

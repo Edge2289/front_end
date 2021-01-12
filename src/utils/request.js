@@ -3,6 +3,7 @@ import { Notification, MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken, setToken } from '@/utils/auth'
 import { encrypt, decrypt } from '@/common/encryption/crypto.js'
+import qs from 'qs';
 
 // create an axios instance
 const service = axios.create({
@@ -27,6 +28,10 @@ service.interceptors.request.use(
     }
     if (getToken()) {
       config.headers['Authorization'] = 'Bearer ' + getToken()
+    }
+
+    if (config.method != "get" && config.method != "delete") {
+      config.data = qs.stringify(config.data);
     }
     return config
   },

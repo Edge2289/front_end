@@ -38,7 +38,7 @@ export function delArticle(data) {
   return request({
     url: ApiUrl.delArticleApi,
     method: 'delete',
-    params: data
+    data
   })
 }
 
@@ -60,7 +60,7 @@ export function addLabel(data) {
   return request({
     url: ApiUrl.getLabel,
     method: 'post',
-    params: data
+    data
   })
 }
 
@@ -72,7 +72,7 @@ export function putLabel(data) {
   return request({
     url: ApiUrl.getLabel,
     method: 'put',
-    params: data
+    data
   })
 }
 
@@ -83,7 +83,7 @@ export function delLabel(data) {
   return request({
     url: ApiUrl.getLabel,
     method: 'delete',
-    params: data
+    data
   })
 }
 

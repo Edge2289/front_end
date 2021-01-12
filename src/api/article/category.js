@@ -18,7 +18,7 @@ export function putCategory(data) {
   return request({
     url: ApiUrl.updateCate,
     method: 'put',
-    data
+    data: data
   })
 }
 /**
@@ -28,7 +28,7 @@ export function addCategory(data) {
   return request({
     url: ApiUrl.addCate,
     method: 'post',
-    data
+    data: data
   })
 }
 /**
@@ -38,6 +38,6 @@ export function delCategory(data) {
   return request({
     url: ApiUrl.delCate,
     method: 'delete',
-    data
+    params: data
   })
 }

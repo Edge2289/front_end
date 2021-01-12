@@ -148,8 +148,8 @@ export default {
     // 请求获取验证码
     getCode() {
       getCodeImg().then(res => {
-        this.codeUrl = res.data.data
-        this.loginForm.uuid = res.data.id
+        this.codeUrl = res.data.captcha
+        this.loginForm.uuid = res.data.captcha_id
       })
     },
     handleLogin() {

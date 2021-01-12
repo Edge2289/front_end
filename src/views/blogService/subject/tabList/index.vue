@@ -28,8 +28,16 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -40,7 +48,8 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -49,7 +58,8 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -58,14 +68,24 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="tab_list" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="tab_list"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="tab_id" />
       <el-table-column label="标签名称" prop="tab_name" width="120" />
-      <el-table-column label="标签颜色" prop="tab_color" :show-overflow-tooltip="true" width="150" />
+      <el-table-column
+        label="标签颜色"
+        prop="tab_color"
+        :show-overflow-tooltip="true"
+        width="150"
+      />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -76,31 +96,42 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createdAt" width="180">
+      <el-table-column
+        label="创建时间"
+        align="center"
+        prop="createdAt"
+        width="180"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.created_at }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.page"
       :limit.sync="queryParams.page_size"
@@ -111,7 +142,11 @@
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="标签名称" prop="tab_name">
-          <el-input v-model="form.label" placeholder="请输入标签名称" :disabled="isEdit" />
+          <el-input
+            v-model="form.label"
+            placeholder="请输入标签名称"
+            :disabled="isEdit"
+          />
         </el-form-item>
         <el-form-item label="标签颜色">
           <!-- <el-input v-model="form.roleKey" placeholder="请输入权限字符" :disabled="isEdit" /> -->
@@ -123,7 +158,8 @@
               v-for="dict in addStatusOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"
-            >{{ dict.dictLabel }}</el-radio>
+              >{{ dict.dictLabel }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -132,17 +168,16 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
 <script>
-import { getLabel, putLabel, addLabel, delLabel } from '@/api/article/article'
-import { dialogDrag } from '@/utils/directives'
-import c from '@/components/ImgLibrary/c'
+import { getLabel, putLabel, addLabel, delLabel } from "@/api/article/article";
+import { dialogDrag } from "@/utils/directives";
+import c from "@/components/ImgLibrary/c";
 
 export default {
-  name: 'Tab',
+  name: "Tab",
   data() {
     return {
       // 遮罩层
@@ -158,7 +193,7 @@ export default {
       // 标签表格数据
       tab_list: [],
       // 弹出层标题
-      title: '',
+      title: "",
       // 是否显示弹出层
       open: false,
       // 是否显示弹出层（数据权限）
@@ -167,186 +202,200 @@ export default {
       // 日期范围
       dateRange: [],
       // 搜索状态数据字典
-      statusOptions: [{
-        'dictValue': -1,
-        'dictLabel': '全部'
-      }, {
-        'dictValue': 1,
-        'dictLabel': '开启'
-      }, {
-        'dictValue': 0,
-        'dictLabel': '关闭'
-      }],
+      statusOptions: [
+        {
+          dictValue: -1,
+          dictLabel: "全部",
+        },
+        {
+          dictValue: 1,
+          dictLabel: "开启",
+        },
+        {
+          dictValue: 0,
+          dictLabel: "关闭",
+        },
+      ],
       // 新增
-      addStatusOptions: [{
-        'dictValue': 1,
-        'dictLabel': '开启'
-      }, {
-        'dictValue': 0,
-        'dictLabel': '关闭'
-      }],
+      addStatusOptions: [
+        {
+          dictValue: 1,
+          dictLabel: "开启",
+        },
+        {
+          dictValue: 0,
+          dictLabel: "关闭",
+        },
+      ],
       // 查询参数
       queryParams: {
         page: 1,
         page_size: 10,
-        label: '',
-        is_state: -1
+        label: "",
+        is_state: -1,
       },
       // 表单参数
       form: {
-        is_state: 0
+        is_state: 0,
       },
       defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
-    }
+        children: "children",
+        label: "label",
+      },
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     /** 查询标签列表 */
     getList() {
-      this.loading = true
-      getLabel(this.queryParams).then(
-        response => {
-          this.loading = false
-          this.total = response.data.count
-          const tab_list = []
-          response.data.list.forEach((item, index) => {
-            tab_list[index] = {
-              'tab_id': item.id,
-              'tab_name': item.label,
-              'tab_color': item.color,
-              'is_state': item.is_state,
-              'operator_name': item.OperatorName,
-              'created_at': item.createTime
-            }
-          }
-          )
-          this.tab_list = tab_list
-        })
+      this.loading = true;
+      getLabel(this.queryParams).then((response) => {
+        this.loading = false;
+        this.total = response.data.total;
+        const tab_list = [];
+        response.data.data.forEach((item, index) => {
+          tab_list[index] = {
+            tab_id: item.id,
+            tab_name: item.label,
+            tab_color: item.color,
+            is_state: item.is_state,
+            operator_name: item.operator_name,
+            created_at: item.created_time,
+          };
+        });
+        this.tab_list = tab_list;
+      });
     },
     // 标签状态修改
     handleStatusChange(row) {
-      const text = row.is_state == 1 ? '启用' : '停用'
-      this.$confirm('确认要"' + text + '""' + row.tab_name + '"标签吗?', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(function() {
-        putLabel({
-          'label': row.tab_name,
-          'color': row.tab_color,
-          'is_state': row.is_state,
-          'id': row.tab_id
+      const text = row.is_state == 1 ? "启用" : "停用";
+      this.$confirm(
+        '确认要"' + text + '""' + row.tab_name + '"标签吗?',
+        "警告",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(function () {
+          putLabel({
+            label: row.tab_name,
+            color: row.tab_color,
+            is_state: row.is_state,
+            id: row.tab_id,
+          });
         })
-      }).catch(function() {
-        row.is_state = row.is_state == 0 ? 1 : 0
-      })
+        .catch(function () {
+          row.is_state = row.is_state == 0 ? 1 : 0;
+        });
     },
     // 取消按钮
     cancel() {
-      this.open = false
-      this.reset()
+      this.open = false;
+      this.reset();
     },
     // 取消按钮（数据权限）
     cancelDataScope() {
-      this.openDataScope = false
-      this.reset()
+      this.openDataScope = false;
+      this.reset();
     },
     // 表单重置
     reset() {
       this.form = {
-        label: '',
-        color: '',
-        is_state: -1
-      }
-    //   this.resetForm('form')
+        label: "",
+        color: "",
+        is_state: -1,
+      };
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.page = 1
-      this.getList()
+      this.queryParams.page = 1;
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.page = 1
-      this.queryParams.page_size = 10
-      this.queryParams.label = ''
-      this.queryParams.is_state = -1
-      this.handleQuery()
+      this.queryParams.page = 1;
+      this.queryParams.page_size = 10;
+      this.queryParams.label = "";
+      this.queryParams.is_state = -1;
+      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.tab_id)
-      this.single = selection.length !== 1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.tab_id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset()
-      this.open = true
-      this.title = '添加标签'
-      this.isEdit = false
+      this.reset();
+      this.open = true;
+      this.title = "添加标签";
+      this.isEdit = false;
+      this.form.is_state = 1;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
-      const tabIds = row.tab_id || this.ids[0]
-      getLabel({ 'id': tabIds, 'is_state': -1 }).then(response => {
-        this.form.label = response.data.list[0].label
-        this.form.is_state = response.data.list[0].is_state
-        this.form.color = response.data.list[0].color
-        this.form.id = response.data.list[0].id
-      })
-      this.open = true
-      this.title = '修改标签'
-      this.isEdit = false
-    //   })
+      this.reset();
+      const tabIds = row.tab_id || this.ids[0];
+      getLabel({ id: tabIds, is_state: -1 }).then((response) => {
+        this.form.label = response.data.data[0].label;
+        this.form.is_state = response.data.data[0].is_state;
+        this.form.color = response.data.data[0].color;
+        this.form.id = response.data.data[0].id;
+      });
+      this.open = true;
+      this.title = "修改标签";
+      this.isEdit = false;
+      //   })
     },
     /** 提交按钮 */
-    submitForm: function() {
-      console.log('this.form', this.form)
-      let requestHeader = ''
+    submitForm: function () {
+      let requestHeader = "";
       if (this.form.id !== undefined) {
-        requestHeader = putLabel(this.form)
+        requestHeader = putLabel(this.form);
       } else {
-        requestHeader = addLabel(this.form)
+        requestHeader = addLabel(this.form);
       }
-      requestHeader.then(response => {
+      requestHeader.then((response) => {
         if (response.code == 200) {
-          this.open = false
-          this.$message({
-            message: response.msg,
-            type: 'success'
-          })
-        } else {
-          this.$message.error(response.msg)
+          this.open = false;
+            this.msgSuccess(response.msg)
+          } else {
+            this.msgError(response.msg)
         }
-        this.getList()
-      })
+        this.getList();
+      });
     },
 
     /** 删除按钮操作 */
     handleDelete(row) {
-      const tab_ids = row.tab_id || this.ids
-      this.$confirm('是否确认删除标签: ' + row.tab_name + ' ?', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(function() {
-        delLabel({
-          'id': tab_ids
-        }).then(response => {
-          console.log(response.data)
+      const tab_ids = row.tab_id || this.ids;
+      let text = ""
+      if (row.tab_name != undefined) {
+        text = ": " + row.tab_name
+      }
+      this.$confirm('是否确认删除标签' + text + ' ?', '警告', {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
+          delLabel({
+            id: tab_ids.join(","),
+          }).then((response) => {
+            console.log(response.data);
+          });
         })
-      }).then(() => {
-        this.getList()
-        this.msgSuccess('删除成功')
-      }).catch(function() {})
-    }
-  }
-}
+        .then(() => {
+          this.getList();
+          this.msgSuccess("删除成功");
+        })
+        .catch(function () {});
+    },
+  },
+};
 </script>

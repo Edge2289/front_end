@@ -26,6 +26,12 @@ import Pagination from '@/components/Pagination'
 // 分頁組件
 //
 Vue.component('Pagination', Pagination)
+// 插件
+// import {msgSuccess, msgInfo, msgError} from './plugin/message/msg' // 引入
+import msgSuccess from './plugin/message/msg' // 引入
+import msgInfo from './plugin/message/msg' // 引入
+import msgError from './plugin/message/msg' // 引入
+Vue.use(msgSuccess, msgInfo, msgError) // 添加
 
 /**
  * If you don't want to use mock-server
