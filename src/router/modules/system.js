@@ -18,17 +18,23 @@ const systemRouter = {
     //   name: 'CommonParameter',
     //   meta: { title: '公共参数配置' }
     // },
+    // {
+    //   path: 'system-secretKeyList',
+    //   component: () => import('@/views/system/secretkeylist/index'),
+    //   name: 'secretKeyList',
+    //   meta: { title: '秘钥列表' }
+    // },
+    // {
+    //   path: 'system-configuration',
+    //   component: () => import('@/views/system/configuration/index'),
+    //   name: 'configuration',
+    //   meta: { title: '第三方配置' }
+    // },
     {
-      path: 'system-secretKeyList',
-      component: () => import('@/views/system/secretkeylist/index'),
-      name: 'secretKeyList',
-      meta: { title: '秘钥列表' }
-    },
-    {
-      path: 'system-configuration',
-      component: () => import('@/views/system/configuration/index'),
-      name: 'configuration',
-      meta: { title: '第三方配置' }
+      path: 'system-sysjobs',
+      component: () => import('@/views/system/sysjobs/index'),
+      name: 'sysjobs',
+      meta: { title: '定时任务' }
     },
     {
       path: 'system-website',
