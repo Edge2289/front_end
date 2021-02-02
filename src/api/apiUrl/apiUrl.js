@@ -32,4 +32,10 @@ export const ApiUrl = {
   // 文章label分類
   getLabel: 'api/blog/v1/article/label', // 獲取文章
 
+  // 系统
+  websiteConfig: 'api/blog/v1/system/websiteConfig', // 获取站点配置
+  jobList: 'api/blog/v1/system/jobList', // 获取任务
+  jobLogList: 'api/blog/v1/system/jobLogList', // 获取任务队列执行日志
+  changeExecution: 'api/blog/v1/system/changeExecution', // 操作当前执行的任务
+
 }

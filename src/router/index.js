@@ -200,39 +200,6 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
-    path: '/seo',
-    component: Layout,
-    redirect: '',
-    name: 'SEO',
-    meta: {
-      title: 'SEO',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: '/blog_seo',
-        component: () => import('@/views/seo/blog_seo/index'),
-        name: 'BlogSeo',
-        redirect: '/seo/blog_seo/index',
-        meta: { title: '博客SEO' },
-        children: [
-          {
-            path: 'baidu_seo',
-            component: () => import('@/views/seo/blog_seo/baidu_seo/index'),
-            name: 'BaiduSeo',
-            meta: { title: '百度SEO', icon: 'list' }
-          },
-          {
-            path: 'xiongzhang_seo',
-            component: () => import('@/views/seo/blog_seo/xiongzhang_seo/index'),
-            name: 'XiongZhangSeo',
-            meta: { title: '熊掌SEO', icon: 'list' }
-          }
-        ]
-      }
-    ]
-  },
   // 日志列表 ---START
   // logMethod,
   // 日志列表 ---END

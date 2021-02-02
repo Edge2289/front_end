@@ -1,49 +1,49 @@
 <template>
-  <div style="padding: 20px;">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+  <div style="padding: 20px">
+    <el-tabs v-loading="loading" v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="站点配置" name="siteConfig">
         <!-- 站点配置 -->
-        <el-table
-          :data="siteConfigData"
-          stripe
-          style="width: 100%"
-        >
-          <el-table-column
-            label="配置名字"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.date }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="配置键名"
-            width="180"
-          >
+        <el-table :data="siteConfigData" stripe style="width: 100%">
+          <el-table-column label="配置名字" width="180">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="配置键值"
-          >
+
+          <el-table-column label="配置键名" width="180">
             <template slot-scope="scope">
-              <el-input v-show="scope.row.show" v-model="scope.row.address" placeholder="请输入内容" />
-              <span v-show="!scope.row.show">{{ scope.row.address }}</span>
+              <span>{{ scope.row.identify }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="备注"
-          >
+
+          <el-table-column label="配置键值">
             <template slot-scope="scope">
-              <span>{{ scope.row.address }}</span>
+              <el-input
+                v-if="scope.row.show"
+                v-model="scope.row.value"
+                placeholder="请输入键值"
+              />
+              <span v-if="!scope.row.show"
+                >{{ scope.row.value }}</span
+              >
             </template>
           </el-table-column>
+
+          <el-table-column label="备注">
+            <template slot-scope="scope">
+              <el-input
+                v-if="scope.row.show"
+                v-model="scope.row.note"
+                placeholder="请输入备注"
+              />
+              <span v-if="!scope.row.show">{{ scope.row.note }}</span>
+            </template>
+          </el-table-column>
+
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="scope.row.show =true">编辑</el-button>
+              <el-button @click="changeConfig(scope.row)">编辑</el-button>
               <el-button @click="saveConfig(scope.row)">保存</el-button>
-              <!-- scope.row.show =false -->
             </template>
           </el-table-column>
         </el-table>
@@ -51,96 +51,96 @@
       </el-tab-pane>
       <el-tab-pane label="博客配置" name="blogConfig">
         <!-- 博客配置 -->
-        <el-table
-          :data="blogConfigData"
-          stripe
-          style="width: 100%"
-        >
-          <el-table-column
-            label="配置名字"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.date }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="配置键名"
-            width="180"
-          >
+        <el-table :data="blogConfigData" stripe style="width: 100%">
+          <el-table-column label="配置名字" width="180">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="配置键值"
-          >
+
+          <el-table-column label="配置键名" width="180">
             <template slot-scope="scope">
-              <el-input v-show="scope.row.show" v-model="scope.row.address" placeholder="请输入内容" />
-              <span v-show="!scope.row.show">{{ scope.row.address }}</span>
+              <span>{{ scope.row.identify }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="备注"
-          >
+
+          <el-table-column label="配置键值">
             <template slot-scope="scope">
-              <span>{{ scope.row.address }}</span>
+              <el-input
+                v-show="scope.row.show"
+                v-model="scope.row.value"
+                placeholder="请输入键值"
+              />
+              <span v-show="!scope.row.show"
+                >{{ scope.row.value }} </span
+              >
             </template>
           </el-table-column>
+
+          <el-table-column label="备注">
+            <template slot-scope="scope">
+              <el-input
+                v-show="scope.row.show"
+                v-model="scope.row.note"
+                placeholder="请输入备注"
+              />
+              <span v-show="!scope.row.show">{{ scope.row.note }}</span>
+            </template>
+          </el-table-column>
+
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="scope.row.show =true">编辑</el-button>
+              <el-button @click="changeConfig(scope.row)">编辑</el-button>
               <el-button @click="saveConfig(scope.row)">保存</el-button>
-              <!-- scope.row.show =false -->
             </template>
           </el-table-column>
         </el-table>
         <!-- 博客配置 -->
       </el-tab-pane>
       <el-tab-pane label="爬虫管理" name="reptilesConfig">
-
         <!-- 爬虫管理 -->
-        <el-table
-          :data="reptilesConfigData"
-          stripe
-          style="width: 100%"
-        >
-          <el-table-column
-            label="配置名字"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.date }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="配置键名"
-            width="180"
-          >
+        <el-table :data="reptilesConfigData" stripe style="width: 100%">
+          <el-table-column label="配置名字" width="180">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="配置键值"
-          >
+
+          <el-table-column label="配置键名" width="180">
             <template slot-scope="scope">
-              <el-input v-show="scope.row.show" v-model="scope.row.address" placeholder="请输入内容" />
-              <span v-show="!scope.row.show">{{ scope.row.address }}</span>
+              <span>{{ scope.row.identify }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="备注"
-          >
+
+          <el-table-column label="配置键值">
             <template slot-scope="scope">
-              <span>{{ scope.row.address }}</span>
+              <el-input
+                v-if="scope.row.show"
+                v-model="scope.row.value"
+                placeholder="请输入键值"
+              />
+              <span v-if="!scope.row.show">{{ scope.row.value }}</span>
             </template>
           </el-table-column>
+
+          <el-table-column label="备注">
+            <template slot-scope="scope">
+              <el-input
+                v-show="scope.row.show"
+                v-model="scope.row.note"
+                placeholder="请输入备注"
+              />
+              <span v-show="!scope.row.show">{{ scope.row.note }}</span>
+            </template>
+          </el-table-column>
+
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="scope.row.show =true">编辑</el-button>
+              <el-button
+                @click="scope.row.show = scope.row.show == true ? false : true"
+                >编辑</el-button
+              >
               <el-button @click="saveConfig(scope.row)">保存</el-button>
-              <!-- scope.row.show =false -->
             </template>
           </el-table-column>
         </el-table>
@@ -150,45 +150,82 @@
   </div>
 </template>
 <script>
+import { getWebsiteConfig, saveWebsiteConfig } from "@/api/system/system";
 export default {
   data() {
     return {
-      activeName: 'siteConfig',
+      activeName: "siteConfig",
+      loading: true,
       // 站点配置
-      siteConfigData: [{
-        id: 1,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        show: false
-      }],
+      siteConfigData: [],
       // 博客配置
-      blogConfigData: [{
-        id: 3,
-        date: '2016-05-02',
-        name: '王小虎asdasd',
-        address: 'asdasdas 1518 弄',
-        show: false
-      }],
+      blogConfigData: [],
       // 爬虫管理
-      reptilesConfigData: [{
-        id: 5,
-        date: '2016-05-02',
-        name: 'ddddd',
-        address: 'sssss 1518 弄',
-        show: false
-      }]
-    }
+      reptilesConfigData: [],
+    };
+  },
+  created() {
+    this.getWebsiteConfig();
   },
   methods: {
+    getWebsiteConfig() {
+      getWebsiteConfig().then((response) => {
+        this.loading = false;
+        // 配置
+        let blogConfigData = [];
+        let siteConfigData = [];
+        let reptilesConfigData = [];
+        response.data.forEach((item, index) => {
+          item.show = false;
+          switch (item.type) {
+            case 1:
+              // 博客配置
+              blogConfigData[blogConfigData.length] = item;
+              break;
+            case 2:
+              // 站点配置
+              siteConfigData[siteConfigData.length] = item;
+              break;
+            case 3:
+              // 爬虫管理
+              reptilesConfigData[reptilesConfigData.length] = item;
+              break;
+          }
+        });
+
+        this.siteConfigData = siteConfigData;
+        this.blogConfigData = blogConfigData;
+        this.reptilesConfigData = reptilesConfigData;
+        console.log(this.blogConfigData);
+      });
+    },
     handleClick(tab, event) {
-      console.log('activeName', this.activeName)
-      console.log(tab, event)
+      // console.log("activeName", this.activeName);
+      // console.log(tab, event);
     },
     saveConfig(scope) {
-      scope.show = false
-      console.log('scope', scope)
-    }
-  }
-}
+      if(scope.value == "" || scope.note == "") {
+          this.msgError("请输入完整信息")
+          return;
+      }
+      scope.show = false;
+      saveWebsiteConfig({
+        "id": scope.id,
+        "value": scope.value,
+        "note": scope.note
+      }).then((response) => {
+        if (response.code == 200) {
+          this.open = false
+          this.msgSuccess(response.msg)
+        } else {
+          this.msgError(response.msg)
+        }
+        this.getWebsiteConfig()
+      })
+    },
+    changeConfig(scope) {
+      scope.show = (scope.show == true? false: true)
+    },
+  },
+};
 </script>
