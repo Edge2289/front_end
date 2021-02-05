@@ -31,7 +31,8 @@ Vue.component('Pagination', Pagination)
 import msgSuccess from './plugin/message/msg' // 引入
 import msgInfo from './plugin/message/msg' // 引入
 import msgError from './plugin/message/msg' // 引入
-Vue.use(msgSuccess, msgInfo, msgError) // 添加
+import responseMessage from './plugin/message/msg' // 引入
+Vue.use(msgSuccess, msgInfo, msgError, responseMessage) // 添加
 
 /**
  * If you don't want to use mock-server

@@ -89,7 +89,6 @@ export default {
     },
     //状态以及 所选的图片地址
     dialogVisibleMethod(val) {
-      console.log("dialogVisibleMethod", val)
       if (val == 0 ) {
         this.selectedImgs = []
       }

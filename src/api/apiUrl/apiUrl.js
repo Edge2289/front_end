@@ -1,3 +1,5 @@
+import { Link } from "element-ui";
+
 /**
  * 公共接口结构块
  */
@@ -37,5 +39,6 @@ export const ApiUrl = {
   jobList: 'api/blog/v1/system/jobList', // 获取任务
   jobLogList: 'api/blog/v1/system/jobLogList', // 获取任务队列执行日志
   changeExecution: 'api/blog/v1/system/changeExecution', // 操作当前执行的任务
-
+  blogLink: 'api/blog/v1/blog/link', // 博客友情链接
+  blogBanner: 'api/blog/v1/blog/banner', // 博客友情链接
 }

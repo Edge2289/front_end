@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 20px">
-    <el-tabs v-loading="loading" v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" v-loading="loading" @tab-click="handleClick">
       <el-tab-pane label="站点配置" name="siteConfig">
         <!-- 站点配置 -->
         <el-table :data="siteConfigData" stripe style="width: 100%">
@@ -23,9 +23,9 @@
                 v-model="scope.row.value"
                 placeholder="请输入键值"
               />
-              <span v-if="!scope.row.show"
-                >{{ scope.row.value }}</span
-              >
+              <span
+                v-if="!scope.row.show"
+              >{{ scope.row.value }}</span>
             </template>
           </el-table-column>
 
@@ -71,9 +71,9 @@
                 v-model="scope.row.value"
                 placeholder="请输入键值"
               />
-              <span v-show="!scope.row.show"
-                >{{ scope.row.value }} </span
-              >
+              <span
+                v-show="!scope.row.show"
+              >{{ scope.row.value }} </span>
             </template>
           </el-table-column>
 
@@ -138,8 +138,7 @@
             <template slot-scope="scope">
               <el-button
                 @click="scope.row.show = scope.row.show == true ? false : true"
-                >编辑</el-button
-              >
+              >编辑</el-button>
               <el-button @click="saveConfig(scope.row)">保存</el-button>
             </template>
           </el-table-column>
@@ -150,69 +149,69 @@
   </div>
 </template>
 <script>
-import { getWebsiteConfig, saveWebsiteConfig } from "@/api/system/system";
+import { getWebsiteConfig, saveWebsiteConfig } from '@/api/system/system'
 export default {
   data() {
     return {
-      activeName: "siteConfig",
+      activeName: 'siteConfig',
       loading: true,
       // 站点配置
       siteConfigData: [],
       // 博客配置
       blogConfigData: [],
       // 爬虫管理
-      reptilesConfigData: [],
-    };
+      reptilesConfigData: []
+    }
   },
   created() {
-    this.getWebsiteConfig();
+    this.getWebsiteConfig()
   },
   methods: {
     getWebsiteConfig() {
       getWebsiteConfig().then((response) => {
-        this.loading = false;
+        this.loading = false
         // 配置
-        let blogConfigData = [];
-        let siteConfigData = [];
-        let reptilesConfigData = [];
+        const blogConfigData = []
+        const siteConfigData = []
+        const reptilesConfigData = []
         response.data.forEach((item, index) => {
-          item.show = false;
+          item.show = false
           switch (item.type) {
             case 1:
               // 博客配置
-              blogConfigData[blogConfigData.length] = item;
-              break;
+              blogConfigData[blogConfigData.length] = item
+              break
             case 2:
               // 站点配置
-              siteConfigData[siteConfigData.length] = item;
-              break;
+              siteConfigData[siteConfigData.length] = item
+              break
             case 3:
               // 爬虫管理
-              reptilesConfigData[reptilesConfigData.length] = item;
-              break;
+              reptilesConfigData[reptilesConfigData.length] = item
+              break
           }
-        });
+        })
 
-        this.siteConfigData = siteConfigData;
-        this.blogConfigData = blogConfigData;
-        this.reptilesConfigData = reptilesConfigData;
-        console.log(this.blogConfigData);
-      });
+        this.siteConfigData = siteConfigData
+        this.blogConfigData = blogConfigData
+        this.reptilesConfigData = reptilesConfigData
+        console.log(this.blogConfigData)
+      })
     },
     handleClick(tab, event) {
       // console.log("activeName", this.activeName);
       // console.log(tab, event);
     },
     saveConfig(scope) {
-      if(scope.value == "" || scope.note == "") {
-          this.msgError("请输入完整信息")
-          return;
+      if (scope.value == '' || scope.note == '') {
+        this.msgError('请输入完整信息')
+        return
       }
-      scope.show = false;
+      scope.show = false
       saveWebsiteConfig({
-        "id": scope.id,
-        "value": scope.value,
-        "note": scope.note
+        'id': scope.id,
+        'value': scope.value,
+        'note': scope.note
       }).then((response) => {
         if (response.code == 200) {
           this.open = false
@@ -224,8 +223,8 @@ export default {
       })
     },
     changeConfig(scope) {
-      scope.show = (scope.show == true? false: true)
-    },
-  },
-};
+      scope.show = (scope.show != true)
+    }
+  }
+}
 </script>
