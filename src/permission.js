@@ -3,7 +3,7 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
+import { getToken, getUserData } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -28,7 +28,6 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // determine whether the user has obtained his permission roles through getInfo
       const hasRoles = store.getters.permission_routes && store.getters.permission_routes.length > 0
-      console.log('hasRoles', hasRoles)
       if (hasRoles) {
         next()
       } else {
@@ -36,7 +35,7 @@ router.beforeEach(async(to, from, next) => {
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           // const { roles } = await store.dispatch('user/getInfo')
-          const data = JSON.parse(sessionStorage.getItem('user_data'))
+          const data = getUserData()
 
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', data['menu_data'])

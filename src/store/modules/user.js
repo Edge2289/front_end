@@ -1,6 +1,6 @@
 import { logout, getInfo } from '@/api/user'
 import { login } from '@/api/common/login'
-import { getToken, setToken, removeToken, setUserData } from '@/utils/auth'
+import { getToken, setToken, removeToken, setUserData, getUserData } from '@/utils/auth'
 import { encrypt, decrypt } from '@/common/encryption/crypto.js'
 import router, { resetRouter } from '@/router'
 
@@ -41,46 +41,42 @@ const actions = {
       }
 
       
-      setUserData(data)
-      setToken("asdasd")
-      commit('SET_ROLES', ['admin'])
-      commit('SET_NAME', data.LoginName)
-      commit('SET_AVATAR', data.Name)
-      commit('SET_INTRODUCTION', data.LoginName)
-      // login({
-      //   user_name: username.trim(),
-      //   pwd: password,
-      //   code: code,
-      //   uuid: uuid
-      // }).then(response => {
-      //   const { data } = response
-      //   console.log("data", data)
-      //   /**
-      //    * 存储一些加密数据
-      //    * 菜单数据
-      //    * 用户数据
-      //    */
-      //   setUserData(data)
-      //   // setToken("asdasd")
-      //   commit('SET_ROLES', ['admin'])
-      //   commit('SET_NAME', data.LoginName)
-      //   commit('SET_AVATAR', data.Name)
-      //   commit('SET_INTRODUCTION', data.LoginName)
+      // setUserData(data)
+      // setToken("asdasd")
+      // commit('SET_ROLES', ['admin'])
+      // commit('SET_NAME', data.LoginName)
+      // commit('SET_AVATAR', data.Name)
+      // commit('SET_INTRODUCTION', data.LoginName)
+      login({
+        user_name: username.trim(),
+        pass_word: password,
+        captcha_code: code,
+        captcha_uuid: uuid
+      }).then(response => {
+        const { data } = response
+        /**
+         * 存储一些加密数据
+         * 菜单数据
+         * 用户数据
+         */
+        setUserData(data)
+        setToken(data.token)
+        commit('SET_ROLES', ['admin'])
+        commit('SET_NAME', data.LoginName)
+        commit('SET_AVATAR', data.Name)
+        commit('SET_INTRODUCTION', data.LoginName)
 
-      //   resolve(data)
-      // }).catch(error => {
-      //   reject(error)
-      // })
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
 
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve) => {
-      data = sessionStorage.getItem('user_data')
-      // data = decrypt(sessionStorage.getItem("user_data"))
-      console.log('data', data)
-      console.log(JSON.parse(data))
+      data = getUserData()
 
       // 这些是系统需要用的数据
       commit('SET_ROLES', ['admin'])

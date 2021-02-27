@@ -90,10 +90,10 @@ export default {
           }
         },
         legend: {
-          data: ['expected', 'actual']
+          data: ['用户新增率', '用户登录率']
         },
         series: [{
-          name: 'expected', itemStyle: {
+          name: '用户新增率', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -109,7 +109,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'actual',
+          name: '用户登录率',
           smooth: true,
           type: 'line',
           itemStyle: {

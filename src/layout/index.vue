@@ -8,9 +8,9 @@
         <tags-view v-if="needTagsView" />
       </div>
       <app-main />
-      <right-panel v-if="showSettings">
+      <!-- <right-panel v-if="showSettings">
         <settings />
-      </right-panel>
+      </right-panel> -->
     </div>
   </div>
 </template>
@@ -27,7 +27,7 @@ export default {
     AppMain,
     Navbar,
     RightPanel,
-    Settings,
+    // Settings,
     Sidebar,
     TagsView
   },
@@ -36,7 +36,7 @@ export default {
     ...mapState({
       sidebar: state => state.app.sidebar,
       device: state => state.app.device,
-      showSettings: state => state.settings.showSettings,
+      // showSettings: state => state.settings.showSettings,
       needTagsView: state => state.settings.tagsView,
       fixedHeader: state => state.settings.fixedHeader
     }),

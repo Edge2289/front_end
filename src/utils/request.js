@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Notification, MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken, setToken } from '@/utils/auth'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 import { encrypt, decrypt } from '@/common/encryption/crypto.js'
 import qs from 'qs';
 
@@ -72,9 +72,10 @@ service.interceptors.response.use(
           type: 'warning'
         }
       ).then(() => {
-        store.dispatch('user/resetToken').then(() => {
-          location.reload() // 为了重新实例化vue-router对象 避免bug
-        })
+        // 移除token
+        removeToken()
+        window.location.reload('/login');
+        // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       })
       return false
     } else if (code === 400) {

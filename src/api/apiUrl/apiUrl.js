@@ -1,11 +1,9 @@
-import { Link } from "element-ui";
-
 /**
  * 公共接口结构块
  */
 export const ApiUrl = {
-  getCodeImg: '/api/blog/v1/pub/captcha', // 获取验证码
-  login: 'api/blog/v1/login', // 登陆
+  getCodeImg: 'api/blog/v1/pub/captcha', // 获取验证码
+  login: 'api/blog/v1/pub/login', // 登陆
 
   // 分组行为
   getImgsGroup: 'api/blog/v1/image/imageCate', // 获取图片分组

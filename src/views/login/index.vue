@@ -50,10 +50,11 @@
           <svg-icon icon-class="validCode" />
         </span>
         <el-input
-          ref="username"
+          ref="code"
           v-model="loginForm.code"
           placeholder="验证码"
-          name="username"
+          name="code"
+          maxlength="4"
           type="text"
           tabindex="3"
           autocomplete="off"
@@ -76,12 +77,9 @@
 
 <script>
 import { getCodeImg } from '@/api/common/login'
-import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
   data() {
     return {
       //  新做

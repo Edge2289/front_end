@@ -165,7 +165,7 @@ export default {
     changeDialogVisible(val) {
       this.dialogVisible = false;
       if (val.selectedImgs.length != 0 && val.status != 0) {
-      this.dialogImageUrl = val.selectedImgs[0].imgurl
+        this.dialogImageUrl = val.selectedImgs[0].imgurl;
       }
       if (val.status == 1 && val.selectedImgs.length == 0) {
         this.dialogImageUrl = "";
@@ -257,18 +257,25 @@ export default {
         this.form.id = parseInt(articleId);
         requestHeader = updateArticle;
       }
-      this.form.label_data = this.form.label_data.join(",")
+      console.log("this.form", this.form.label_data);
+      this.form.label_data = this.form.label_data.join(",");
+      console.log("this.form", this.form.label_data);
       this.form.img = this.dialogImageUrl;
       this.form.text = this.html;
       this.form.markdown = this.content;
-      console.log("this.form", this.form)
       requestHeader(this.form).then((response) => {
         console.log("response", response.data);
         if (response.code == 200) {
-            this.msgSuccess(response.msg)
+          this.msgSuccess(response.msg);
         } else {
-            this.msgError(response.msg)
+          this.msgError(response.msg);
         }
+        var dataIntArr = []; //保存转换后的整型字符串
+        //方法一
+        this.form.label_data.split(",").forEach(function (data, index, arr) {
+          dataIntArr.push(+data);
+        });
+        this.form.label_data = dataIntArr;
       });
     },
     // 关闭

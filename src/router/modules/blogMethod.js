@@ -16,7 +16,7 @@ const blogMethod =
     {
       path: '/common',
       component: () => import('@/views/blogService/common/index'),
-      name: 'BlogSeo',
+      name: 'BlogCommon',
       redirect: '/blogService/common/index',
       meta: { title: '基础信息' },
       children: [
@@ -31,19 +31,19 @@ const blogMethod =
           component: () => import('@/views/blogService/common/link/index'),
           name: 'link',
           meta: { title: '友情链接', icon: 'list' }
-        },
-        {
-          path: 'basicInfo',
-          component: () => import('@/views/blogService/common/basicInfo/index'),
-          name: 'XiongZhangSeo',
-          meta: { title: '博客站点配置', icon: 'list' }
+        // },
+        // {
+        //   path: 'basicInfo',
+        //   component: () => import('@/views/blogService/common/basicInfo/index'),
+        //   name: 'XiongZhangSeo',
+        //   meta: { title: '博客站点配置', icon: 'list' }
         }
       ]
     },
     {
       path: '/subject',
       component: () => import('@/views/blogService/subject/index'),
-      name: 'BlogSeo',
+      name: 'BlogArticle',
       redirect: '/blogService/subject/index',
       meta: { title: '主体信息' },
       children: [
