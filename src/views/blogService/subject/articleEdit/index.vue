@@ -257,14 +257,11 @@ export default {
         this.form.id = parseInt(articleId);
         requestHeader = updateArticle;
       }
-      console.log("this.form", this.form.label_data);
       this.form.label_data = this.form.label_data.join(",");
-      console.log("this.form", this.form.label_data);
       this.form.img = this.dialogImageUrl;
       this.form.text = this.html;
       this.form.markdown = this.content;
       requestHeader(this.form).then((response) => {
-        console.log("response", response.data);
         if (response.code == 200) {
           this.msgSuccess(response.msg);
         } else {
