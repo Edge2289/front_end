@@ -75,15 +75,13 @@
               size="mini"
               plain
               @click="handleQuery"
-              >搜索</el-button
-            >
+            >搜索</el-button>
             <el-button
               icon="el-icon-refresh"
               size="mini"
               plain
               @click="resetQuery"
-              >重置</el-button
-            >
+            >重置</el-button>
           </el-form-item>
         </el-form>
 
@@ -94,8 +92,7 @@
               icon="el-icon-plus"
               size="mini"
               @click="handleAdd"
-              >新增</el-button
-            >
+            >新增</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -104,8 +101,7 @@
               size="mini"
               :disabled="single"
               @click="handleUpdate"
-              >修改</el-button
-            >
+            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -114,8 +110,7 @@
               size="mini"
               :disabled="multiple"
               @click="handleDelete"
-              >删除</el-button
-            >
+            >删除</el-button>
           </el-col>
         </el-row>
 
@@ -145,9 +140,8 @@
                 width="40"
                 height="40"
                 class="head_pic"
-              />
-              　　</template
-            >
+              >
+            　　</template>
           </el-table-column>
           <el-table-column
             label="文章分类"
@@ -200,16 +194,14 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
-                >修改</el-button
-              >
+              >修改</el-button>
               <el-button
                 v-if="scope.row.userId !== 1"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-                >删除</el-button
-              >
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -231,14 +223,14 @@ import {
   getArticleList,
   delArticle,
   updateArticle,
-  getLabel,
-} from "@/api/article/article";
-import { getCategory } from "@/api/article/category";
-import { getToken } from "@/utils/auth";
-import Treeselect from "@riophae/vue-treeselect";
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+  getLabel
+} from '@/api/article/article'
+import { getCategory } from '@/api/article/category'
+import { getToken } from '@/utils/auth'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
-  name: "User",
+  name: 'User',
   components: { Treeselect },
   data() {
     return {
@@ -257,7 +249,7 @@ export default {
       // 文章表格数据
       articleList: null,
       // 弹出层标题
-      title: "",
+      title: '',
       // 分类树选项
       cateOptions: [],
       // 分类名称
@@ -266,60 +258,60 @@ export default {
       statusOptions: [
         {
           dictValue: 1,
-          dictLabel: "开启",
+          dictLabel: '开启'
         },
         {
           dictValue: 0,
-          dictLabel: "关闭",
+          dictLabel: '关闭'
         },
         {
           dictValue: -1,
-          dictLabel: "全部",
-        },
+          dictLabel: '全部'
+        }
       ],
       // 表单参数
       form: {},
       defaultProps: {
-        children: "children",
-        label: "name",
+        children: 'children',
+        label: 'name'
       },
       // 查询参数
       queryParams: {
         page: 1,
         page_size: 10,
-        nick: "",
-        title: "",
+        nick: '',
+        title: '',
         is_state: -1,
-        cate_id: 0,
-      },
-    };
+        cate_id: 0
+      }
+    }
   },
   watch: {
     // 根据名称筛选分类树
     cateName(val) {
-      this.getCareselect();
-    },
+      this.getCareselect()
+    }
   },
   created() {
-    this.getList();
-    this.getCareselect();
+    this.getList()
+    this.getCareselect()
   },
   methods: {
     /** 查询文章列表 */
     getList() {
-      this.loading = true;
+      this.loading = true
       if (this.queryParams.cate_id == 0) {
-        this.queryParams.cate_id = "";
+        this.queryParams.cate_id = ''
       }
       getArticleList(this.queryParams)
         .then((response) => {
-          this.articleList = response.data.data;
-          this.total = response.data.total;
-          this.loading = false;
+          this.articleList = response.data.data
+          this.total = response.data.total
+          this.loading = false
         })
-        .catch(function (err) {
-          console.log("err", err);
-        });
+        .catch(function(err) {
+          console.log('err', err)
+        })
     },
     /** 查询分类下拉树结构 */
     getCareselect() {
@@ -327,91 +319,91 @@ export default {
         page: 1,
         page_sieze: 1000,
         is_state: 1,
-        name: this.cateName == undefined ? "" : this.cateName,
+        name: this.cateName == undefined ? '' : this.cateName
       }).then((response) => {
-        this.cateOptions = response.data.data;
-      });
+        this.cateOptions = response.data.data
+      })
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.loading = true;
-      this.queryParams.cate_id = data.id;
-      this.getList();
+      this.loading = true
+      this.queryParams.cate_id = data.id
+      this.getList()
     },
     // 文章状态修改
     handleStatusChange(row) {
-      const text = row.is_state === "1" ? "启用" : "停用";
-      let that = this;
-      this.$confirm('确认要"' + text + '""' + row.title + '"文章吗?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      const text = row.is_state === '1' ? '启用' : '停用'
+      const that = this
+      this.$confirm('确认要"' + text + '""' + row.title + '"文章吗?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
         callback: (action) => {
-          if (action === "confirm") {
-            this.getList();
+          if (action === 'confirm') {
+            this.getList()
             // return changeUserStatus(row.userId, row.status)
-            this.msgInfo("暂不支持在此操作");
+            this.msgInfo('暂不支持在此操作')
           } else {
-            this.getList();
-            console.log("按下 取消");
+            this.getList()
+            console.log('按下 取消')
           }
-          row.is_state = row.is_state === "1"? "0": "1";
-        },
-      });
+          row.is_state = row.is_state === '1' ? '0' : '1'
+        }
+      })
     },
     // 取消按钮
     cancel() {
-      this.open = false;
-      this.reset();
+      this.open = false
+      this.reset()
     },
     // 表单重置
     reset() {
       this.queryParams = {
         page: 1,
         page_size: 30,
-        nick: "",
-        title: "",
+        nick: '',
+        title: '',
         is_state: -1,
-        cate_id: 0,
-      };
-      this.getList();
+        cate_id: 0
+      }
+      this.getList()
     },
     /** 搜索按钮操作 */
     handleQuery() {
       // this.queryParams.page = 1
-      this.getList();
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [];
+      this.dateRange = []
       // this.resetForm('queryForm')
-      this.reset();
+      this.reset()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
+      this.ids = selection.map((item) => item.id)
+      this.single = selection.length !== 1
+      this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
       // this.reset()
       // this.getTreeselect()
       this.$router.push({
-        path: "/subject/articleEdit",
-        query: this.otherQuery,
-      });
+        path: '/subject/articleEdit',
+        query: this.otherQuery
+      })
     },
     /** 删除操作 */
     handleDelete(row) {},
     /** 更新操作 */
     handleUpdate(row) {
-      const id = row.id || this.ids[0];
+      const id = row.id || this.ids[0]
       this.$router.push({
-        path: "/subject/articleEdit?articleId=" + id,
-        query: this.otherQuery,
-      });
-    },
-  },
-};
+        path: '/subject/articleEdit?articleId=' + id,
+        query: this.otherQuery
+      })
+    }
+  }
+}
 </script>
