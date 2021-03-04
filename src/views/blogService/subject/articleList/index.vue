@@ -169,12 +169,13 @@
           />
           <el-table-column label="状态" width="50" align="center">
             <template slot-scope="scope">
-              <el-switch
+              {{ scope.row.status == 1 ? "开启": "关闭" }}
+              <!-- <el-switch
                 v-model="scope.row.status"
                 active-value="0"
                 inactive-value="1"
                 @change="handleStatusChange(scope.row)"
-              />
+              /> -->
             </template>
           </el-table-column>
           <el-table-column
@@ -216,8 +217,8 @@
         <pagination
           v-show="total > 0"
           :total="total"
-          :page.sync="queryParams.pageIndex"
-          :limit.sync="queryParams.pageSize"
+          :page.sync="queryParams.page"
+          :limit.sync="queryParams.page_size"
           @pagination="getList"
         />
       </el-col>
@@ -285,7 +286,7 @@ export default {
       // 查询参数
       queryParams: {
         page: 1,
-        page_size: 30,
+        page_size: 10,
         nick: "",
         title: "",
         is_state: -1,
