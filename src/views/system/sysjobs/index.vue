@@ -103,7 +103,7 @@
             size="mini"
             type="text"
             icon="el-icon-sort"
-            @click="handleUpdate(scope.row)"
+            @click="changeJobExecution(scope.row)"
           >暂停/开启</el-button>
           <el-button
             size="mini"
@@ -493,6 +493,14 @@ export default {
         this.open = true
         this.title = '修改任务'
         this.isEdit = false
+      })
+    },
+    /** 修改任务状态 */
+    changeJobExecution(row) {
+      const ids = row.id || this.ids[0]
+      changeJobExecution({ id: ids}).then((response) => {
+        // 操作
+        this.responseMessage(response)
       })
     },
     /** 提交按钮 */
