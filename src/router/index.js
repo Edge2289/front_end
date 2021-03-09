@@ -8,14 +8,9 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import systemRouter from './modules/system'
-// import logMethod from './modules/logMethod'
 import blogMethod from './modules/blogMethod'
+import adminMethod from './modules/adminMethod'
 
-/**
- * constantRoutes
- * a base page that does not have permission requirements
- * all roles can be accessed
- */
 export const constantRoutes = [
   {
     path: '/redirect',
@@ -202,13 +197,15 @@ export const asyncRoutes = [
         meta: { title: '服务监控', icon: 'server' }
       },
       {
-        path: 'apimonitor',
-        component: () => import('@/views/server/monitor/index'),
-        name: 'apimonitor',
-        meta: { title: 'api监控', icon: 'server' }
+        path: 'webAccess',
+        component: () => import('@/views/server/webAccess/index'),
+        name: 'webAccess',
+        meta: { title: 'web访问流量', icon: 'server' }
       }
     ]
   },
+  /** 管理员 */
+  adminMethod,
   /** 系统模块 **/
   systemRouter,
 

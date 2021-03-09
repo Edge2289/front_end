@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form ref="queryForm" :model="queryParams" :inline="true">
-      <el-form-item label="标签名称" prop="roleName">
+      <el-form-item label="管理员名称" prop="roleName">
         <el-input
           v-model="queryParams.label"
-          placeholder="请输入标签名称"
+          placeholder="请输入管理员名称"
           clearable
           size="small"
           style="width: 240px"
@@ -14,7 +14,7 @@
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.is_state"
-          placeholder="标签状态"
+          placeholder="状态"
           clearableis_state
           size="small"
           style="width: 240px"
@@ -79,13 +79,9 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="tab_id" />
-      <el-table-column label="标签名称" prop="tab_name" width="120" />
-      <el-table-column
-        label="标签颜色"
-        prop="tab_color"
-        :show-overflow-tooltip="true"
-        width="150"
-      />
+      <el-table-column label="登录账号" prop="tab_name" width="120" />
+      <el-table-column label="管理员名称" prop="tab_name" width="120" />
+      <el-table-column label="角色" prop="tab_name" width="120" />
       <el-table-column label="状态" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -141,16 +137,34 @@
     <!-- 添加或修改标签配置对话框 -->
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="标签名称" prop="tab_name">
+        <el-form-item label="名称" prop="tab_name">
           <el-input
             v-model="form.label"
-            placeholder="请输入标签名称"
+            placeholder="请输入管理员名称"
             :disabled="isEdit"
           />
         </el-form-item>
-        <el-form-item label="标签颜色">
-          <!-- <el-input v-model="form.roleKey" placeholder="请输入权限字符" :disabled="isEdit" /> -->
-          <el-color-picker v-model="form.color" size="medium" />
+        <el-form-item label="重置密码" prop="tab_name">
+          <el-input
+            v-model="form.label"
+            placeholder="请输入管理员名称"
+            :disabled="isEdit"
+          />
+        </el-form-item>
+        <el-form-item label="角色关联" prop="role_ids">
+          <el-select
+            v-model="value2"
+            multiple
+            collapse-tags
+            style="margin-left: 20px;"
+            placeholder="请选择">
+            <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+        </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.is_state">
@@ -201,6 +215,23 @@ export default {
       isEdit: false,
       // 日期范围
       dateRange: [],
+      options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        value2: [],
       // 搜索状态数据字典
       statusOptions: [
         {

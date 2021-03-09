@@ -267,8 +267,9 @@ export default {
             tab_note: item.note,
             is_state: item.is_state,
             operator_name: item.operator_name,
-            created_time: item.created_time,
+            created_time: item.created_at,
           };
+          console.log("tab_list", )
         });
         this.tab_list = tab_list;
         than.loading = false;

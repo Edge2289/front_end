@@ -62,7 +62,6 @@
 <script>
 import { getServer } from "@/api/monitor/server";
 import echarts from "echarts";
-import { number } from "echarts/lib/export";
 export default {
   name: "Server",
   data() {

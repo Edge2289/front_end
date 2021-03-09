@@ -39,4 +39,9 @@ export const ApiUrl = {
   changeExecution: 'api/blog/v1/system/changeExecution', // 操作当前执行的任务
   blogLink: 'api/blog/v1/blog/link', // 博客友情链接
   blogBanner: 'api/blog/v1/blog/banner', // 博客友情链接
+
+  // getTallyData
+  getTallyData: 'api/blog/pub/webAccess/list', // 获取web的流量数据
+  getAnalysisData: 'api/blog/v1/getAnalysisData', // 获取分析页数据
+  getMonitorData: 'api/blog/v1/getMonitorData', // 获取分析页数据
 }

@@ -89,7 +89,7 @@
     </el-table>
 
     <!-- 添加或修改菜单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px">
+    <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="600px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="24">
@@ -206,6 +206,7 @@ import { getMenuList, delMenu, addMenu, updateMenu } from '@/api/system/menu'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import IconSelect from '@/components/IconSelect'
+import { dialogDrag } from "@/utils/directives";
 
 export default {
   name: 'Menu',
@@ -292,12 +293,12 @@ export default {
     },
     /** 查询菜单下拉树结构 */
     getTreeselect() {
-      listMenu().then(response => {
-        this.menuOptions = []
-        const menu = { menuId: 0, title: '主类目', children: [] }
-        menu.children = response.data
-        this.menuOptions.push(menu)
-      })
+      // listMenu().then(response => {
+      //   this.menuOptions = []
+      //   const menu = { menuId: 0, title: '主类目', children: [] }
+      //   menu.children = response.data
+      //   this.menuOptions.push(menu)
+      // })
     },
     // 菜单显示状态字典翻译
     visibleFormat(row) {
@@ -324,7 +325,7 @@ export default {
         isFrame: '1',
         visible: '0'
       }
-      this.resetForm('form')
+      // this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -397,9 +398,9 @@ export default {
 <style>
   .el-row {
     margin-bottom: 20px;
-    &:last-child {
+    /* &:last-child {
       margin-bottom: 0;
-    }
+    } */
   }
   .el-col {
     border-radius: 4px;

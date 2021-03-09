@@ -90,10 +90,10 @@ export default {
           }
         },
         legend: {
-          data: ['用户新增率', '用户登录率']
+          data: ['用户新增量', '用户登录量']
         },
         series: [{
-          name: '用户新增率', itemStyle: {
+          name: '用户新增量', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -104,12 +104,12 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: expectedData,
+          data: [100, 120, 161, 134, 105, 160, 165],
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
         {
-          name: '用户登录率',
+          name: '用户登录量',
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -124,7 +124,7 @@ export default {
               }
             }
           },
-          data: actualData,
+          data: [120, 82, 91, 154, 162, 140, 145],
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]

@@ -33,12 +33,11 @@
           icon="el-icon-search"
           size="mini"
           @click="handleQuery"
-        >搜索</el-button>
-        <el-button
-          icon="el-icon-refresh"
-          size="mini"
-          @click="resetQuery"
-        >重置</el-button>
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -49,7 +48,8 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -58,7 +58,8 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -67,7 +68,8 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
     </el-row>
 
@@ -104,13 +106,15 @@
             type="text"
             icon="el-icon-sort"
             @click="changeJobExecution(scope.row)"
-          >暂停/开启</el-button>
+            >暂停/开启</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-document"
             @click="handleJobLog(scope.row)"
-          >日志</el-button>
+            >日志</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -279,7 +283,8 @@
               v-for="dict in addStatusOptions"
               :key="dict.dictValue"
               :label="dict.dictValue"
-            >{{ dict.dictLabel }}</el-radio>
+              >{{ dict.dictLabel }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -297,12 +302,17 @@
       width="80%"
     >
       <el-table :data="jobLogData" stripe style="width: 100%" height="250">
-        <el-table-column prop="job_id" align="center" label="任务id" width="80" />
+        <el-table-column
+          prop="job_id"
+          align="center"
+          label="任务id"
+          width="80"
+        />
         <el-table-column prop="start_time" label="开始日期" width="240" />
         <el-table-column prop="end_time" label="结束日期" width="240" />
         <el-table-column label="执行状态">
           <template slot-scope="scope">
-            <span>{{ scope.row.is_state == 1? "执行成功": "执行失败" }}</span>
+            <span>{{ scope.row.is_state == 1 ? "执行成功" : "执行失败" }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="err_msg" label="异常信息" />
@@ -330,13 +340,13 @@ import {
   updateJobsData,
   addJobsData,
   getJobLogList,
-  changeJobExecution
-} from '@/api/system/system'
-import { dialogDrag } from '@/utils/directives'
-import c from '@/components/ImgLibrary/c'
+  changeJobExecution,
+} from "@/api/system/system";
+import { dialogDrag } from "@/utils/directives";
+import c from "@/components/ImgLibrary/c";
 
 export default {
-  name: 'Tab',
+  name: "Tab",
   data() {
     return {
       // 遮罩层
@@ -352,208 +362,207 @@ export default {
       // 标签表格数据
       tab_list: [],
       // 弹出层标题
-      title: '',
+      title: "",
       // 是否显示弹出层
       open: false,
       // 日志弹窗
       jobsOpen: false,
       // 日志弹窗标题
-      jobsTitle: '',
+      jobsTitle: "",
       isEdit: false,
       // 搜索状态数据字典
       statusOptions: [
         {
           dictValue: -1,
-          dictLabel: '全部'
+          dictLabel: "全部",
         },
         {
           dictValue: 1,
-          dictLabel: '开启'
+          dictLabel: "开启",
         },
         {
           dictValue: 0,
-          dictLabel: '关闭'
-        }
+          dictLabel: "关闭",
+        },
       ],
       addStatusOptions: [
         {
           dictValue: 1,
-          dictLabel: '开启'
+          dictLabel: "开启",
         },
         {
           dictValue: 0,
-          dictLabel: '关闭'
-        }
+          dictLabel: "关闭",
+        },
       ],
       // 查询参数
       queryParams: {
         page: 1,
         page_size: 10,
-        label: '',
-        is_state: -1
+        label: "",
+        is_state: -1,
       },
       // 表单参数
       form: {
-        id: '',
-        job_name: '',
-        job_group: '',
-        cron_expression: '',
-        invoke_type: 'interface',
-        execution_policy: 'loop_execution',
+        id: "",
+        job_name: "",
+        job_group: "",
+        cron_expression: "",
+        invoke_type: "interface",
+        execution_policy: "loop_execution",
         is_concurrent: 0,
-        invoke_target: '',
+        invoke_target: "",
         is_state: 0,
-        target_parameter: ''
+        target_parameter: "",
       },
       jobLogQuery: {
-        id: '',
+        id: "",
         total: 1,
         page: 1,
-        page_size: 10
+        page_size: 10,
       },
-      jobLogData: []
-    }
+      jobLogData: [],
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     /** 查询标签列表 */
     getList() {
-      this.loading = true
+      this.loading = true;
       getJobsList(this.queryParams).then((response) => {
-        this.loading = false
-        this.total = response.data.total
-        const tab_list = []
-        this.tab_list = response.data.data
-      })
+        this.loading = false;
+        this.total = response.data.total;
+        const tab_list = [];
+        this.tab_list = response.data.data;
+      });
     },
     // 取消按钮
     cancel() {
-      this.open = false
-      this.jobsOpen = false
-      this.reset()
+      this.open = false;
+      this.jobsOpen = false;
+      this.reset();
     },
     // 表单重置
     reset() {
       this.form = {
-        id: '',
-        job_name: '',
-        job_group: '',
-        cron_expression: '',
-        invoke_type: 'interface',
-        execution_policy: 'loop_execution',
+        id: "",
+        job_name: "",
+        job_group: "",
+        cron_expression: "",
+        invoke_type: "interface",
+        execution_policy: "loop_execution",
         is_concurrent: 0,
-        invoke_target: '',
+        invoke_target: "",
         is_state: 0,
-        target_parameter: ''
-      }
+        target_parameter: "",
+      };
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.page = 1
-      this.getList()
+      this.queryParams.page = 1;
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.page = 1
-      this.queryParams.page_size = 10
-      this.queryParams.job_name = ''
-      this.queryParams.is_state = -1
-      this.handleQuery()
+      this.queryParams.page = 1;
+      this.queryParams.page_size = 10;
+      this.queryParams.job_name = "";
+      this.queryParams.is_state = -1;
+      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.id)
-      this.single = selection.length !== 1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset()
-      this.open = true
-      this.title = '添加任务'
-      this.isEdit = false
-      this.form.is_state = 1
+      this.reset();
+      this.open = true;
+      this.title = "添加任务";
+      this.isEdit = false;
+      this.form.is_state = 1;
     },
     // 打开任务日志
     handleJobLog(row) {
-      this.jobsTitle = row.job_name
-      this.jobLogQuery.id = row.id
-      this.jobLogData = []
-      this.jobsOpen = true
-      this.getJobsLogList()
+      this.jobsTitle = row.job_name;
+      this.jobLogQuery.id = row.id;
+      this.jobLogData = [];
+      this.jobsOpen = true;
+      this.getJobsLogList();
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
-      const ids = row.id || this.ids[0]
+      this.reset();
+      const ids = row.id || this.ids[0];
       getJobsList({ id: ids, is_state: -1 }).then((response) => {
-        this.form = response.data.data[0]
-        this.open = true
-        this.title = '修改任务'
-        this.isEdit = false
-      })
+        this.form = response.data.data[0];
+        this.open = true;
+        this.title = "修改任务";
+        this.isEdit = false;
+      });
     },
     /** 修改任务状态 */
     changeJobExecution(row) {
-      const ids = row.id || this.ids[0]
-      changeJobExecution({ id: ids}).then((response) => {
+      const ids = row.id || this.ids[0];
+      changeJobExecution({ id: ids }).then((response) => {
         // 操作
-        this.responseMessage(response)
-      })
+        this.responseMessage(response);
+        this.getList();
+      });
     },
     /** 提交按钮 */
-    submitForm: function() {
-      let requestHeader = ''
-      if (this.form.id != '') {
-        requestHeader = updateJobsData(this.form)
+    submitForm: function () {
+      let requestHeader = "";
+      if (this.form.id != "") {
+        requestHeader = updateJobsData(this.form);
       } else {
-        requestHeader = addJobsData(this.form)
+        requestHeader = addJobsData(this.form);
       }
       requestHeader.then((response) => {
         if (response.code == 200) {
-          this.open = false
-          this.msgSuccess(response.msg)
-        } else {
-          this.msgError(response.msg)
+          this.open = false;
         }
-        this.getList()
-      })
+        this.responseMessage(response);
+        this.getList();
+      });
     },
 
     /** 删除按钮操作 */
     handleDelete(row) {
-      const tab_ids = row.id || this.ids
-      let text = ''
+      const tab_ids = row.id || this.ids;
+      let text = "";
       if (row.job_name != undefined) {
-        text = ': ' + row.job_name
+        text = ": " + row.job_name;
       }
-      this.$confirm('是否确认删除任务' + text + ' ?', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("是否确认删除任务" + text + " ?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       })
-        .then(function() {
+        .then(function () {
           delJob({
-            id: tab_ids.join(',')
+            id: tab_ids.join(","),
           }).then((response) => {
             if (response.code == 200) {
-              this.msgSuccess(response.msg)
+              this.msgSuccess(response.msg);
             } else {
-              this.msgError(response.msg)
+              this.msgError(response.msg);
             }
-          })
+          });
         })
-        .catch(function() {})
-      this.getList()
+        .catch(function () {});
+      this.getList();
     },
     getJobsLogList() {
       getJobLogList(this.jobLogQuery).then((response) => {
-        this.jobLogData = response.data.data
-        this.jobLogQuery.total = response.data.total
-      })
-    }
-  }
-}
+        this.jobLogData = response.data.data;
+        this.jobLogQuery.total = response.data.total;
+      });
+    },
+  },
+};
 </script>

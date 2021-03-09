@@ -31,12 +31,12 @@ const blogMethod =
           component: () => import('@/views/blogService/common/link/index'),
           name: 'link',
           meta: { title: '友情链接', icon: 'list' }
-        // },
-        // {
-        //   path: 'basicInfo',
-        //   component: () => import('@/views/blogService/common/basicInfo/index'),
-        //   name: 'XiongZhangSeo',
-        //   meta: { title: '博客站点配置', icon: 'list' }
+        },
+        {
+          path: 'comments',
+          component: () => import('@/views/blogService/common/comments/index'),
+          name: 'comments',
+          meta: { title: '评论管理', icon: 'list' }
         }
       ]
     },
