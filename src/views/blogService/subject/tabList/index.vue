@@ -387,7 +387,6 @@ export default {
           delLabel({
             id: tab_ids.join(","),
           }).then((response) => {
-            console.log(response.data);
           });
         })
         .then(() => {

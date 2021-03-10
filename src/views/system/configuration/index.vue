@@ -182,12 +182,12 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      console.log('activeName', this.activeName)
-      console.log(tab, event)
+      // console.log('activeName', this.activeName)
+      // console.log(tab, event)
     },
     saveConfig(scope) {
       scope.show = false
-      console.log('scope', scope)
+      // console.log('scope', scope)
     }
   }
 }

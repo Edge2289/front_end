@@ -195,7 +195,7 @@ export default {
         this.siteConfigData = siteConfigData
         this.blogConfigData = blogConfigData
         this.reptilesConfigData = reptilesConfigData
-        console.log(this.blogConfigData)
+        // console.log(this.blogConfigData)
       })
     },
     handleClick(tab, event) {

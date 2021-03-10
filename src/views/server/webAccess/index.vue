@@ -98,7 +98,7 @@
       :visible.sync="open"
       width="80%"
     >
-      <el-table v-loading="select_loading" :data="selectAccess">
+      <el-table v-loading="select_loading" :data="selectAccess" :max-height="300">
         <el-table-column fixed label="链接" prop="uri" width="260" />
         <el-table-column label="来源链接" prop="source_uri" width="260" />
         <el-table-column label="关键词" prop="key_word" width="100" />
@@ -221,10 +221,14 @@ export default {
     },
     getSelectList() {
       this.select_loading = true;
+      this.selectQueryParams['page'] = this.selectQueryParams['select_page']
+      this.selectQueryParams['page_size'] = this.selectQueryParams['select_page_size']
       getTallyData(this.selectQueryParams).then((response) => {
         this.select_loading = false;
         this.select_total = response.data.total;
         this.selectAccess = response.data.data;
+        delete this.selectQueryParams['ip']
+        delete this.selectQueryParams['cookie']
       });
     },
     cancel() {

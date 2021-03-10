@@ -201,7 +201,6 @@ export default {
             labels[index] = item.label_id;
           });
           this.form.label_data = labels;
-          console.log("this.form", this.form);
         });
       }
     },
