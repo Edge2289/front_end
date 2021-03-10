@@ -227,8 +227,6 @@ export default {
         this.select_loading = false;
         this.select_total = response.data.total;
         this.selectAccess = response.data.data;
-        delete this.selectQueryParams['ip']
-        delete this.selectQueryParams['cookie']
       });
     },
     cancel() {
