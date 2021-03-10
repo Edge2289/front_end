@@ -111,6 +111,9 @@ import "mavon-editor/dist/css/index.css";
 import "mavon-editor/dist/highlightjs/highlight.min.js";
 import "mavon-editor/dist/katex/katex";
 import ImgLibrary from "@/components/ImgLibrary"; // 图片选择
+import {
+  uploadImg,
+} from '@/api/system/imgs'
 
 export default {
   name: "",
@@ -132,8 +135,8 @@ export default {
         nick: "",
         cate_id: "",
         label_data: [],
-        is_comment: 1,
-        is_state: 0,
+        is_comment: 0,
+        is_state: 1,
         text: "",
         markdown: "",
         show_type: 0,
@@ -172,6 +175,7 @@ export default {
         this.dialogImageUrl = "";
       }
     },
+    // 获取文章数据
     getData() {
       // this.content = '```php \n asdasd \n ```  \n ### 12345';
       const articleId = this.$route.query.articleId;
@@ -201,6 +205,7 @@ export default {
         });
       }
     },
+    // 获取标签数据
     getLabelData() {
       /**
        *  获取标签
@@ -218,6 +223,7 @@ export default {
         });
       });
     },
+    // 获取分类数据
     getCateData() {
       getCategory({
         page: 1,
@@ -229,18 +235,14 @@ export default {
       });
     },
     // 将图片上传到服务器，返回地址替换到md中
-    $imgAdd(pos, $file) {
+    async $imgAdd(pos, $file) {
       const formdata = new FormData();
-
-      // this.$upload
-      //   .post("/上传接口地址", formdata)
-      //   .then((res) => {
-      //     console.log(res.data);
-      //     this.$refs.md.$img2Url(pos, res.data);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      uploadImg({
+          data: $file.miniurl,
+          cate_id: 0
+        }).then(res => {
+          this.$refs.md.$img2Url(pos, res.data.uri);
+        });
     },
     // 所有操作都会被解析重新渲染
     change(value, render) {
