@@ -44,4 +44,9 @@ export const ApiUrl = {
   getTallyData: 'api/blog/pub/webAccess/list', // 获取web的流量数据
   getAnalysisData: 'api/blog/v1/getAnalysisData', // 获取分析页数据
   getMonitorData: 'api/blog/v1/getMonitorData', // 获取分析页数据
+
+  // manage user
+  adminApi: 'api/blog/v1/manage/manage', // 获取管理员的数据
+  roleApi: 'api/blog/v1/manage/role', // 获取角色的数据
+  menuApi: 'api/blog/v1/manage/menu', // 获取菜单的数据
 }

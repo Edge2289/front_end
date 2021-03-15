@@ -3,7 +3,7 @@
     <el-form ref="queryForm" :model="queryParams" :inline="true">
       <el-form-item label="管理员名称" prop="roleName">
         <el-input
-          v-model="queryParams.label"
+          v-model="queryParams.login_name"
           placeholder="请输入管理员名称"
           clearable
           size="small"
@@ -78,11 +78,11 @@
       :data="tab_list"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" align="tab_id" />
-      <el-table-column label="登录账号" prop="tab_name" width="120" />
-      <el-table-column label="管理员名称" prop="tab_name" width="120" />
-      <el-table-column label="角色" prop="tab_name" width="120" />
-      <el-table-column label="状态" align="center" width="100">
+      <el-table-column type="selection" width="55" align="id" />
+      <el-table-column label="登录账号" prop="login_name" width="120" />
+      <el-table-column label="管理员名称" prop="name" width="120" />
+      <el-table-column label="角色" prop="roleJoin" width="200" />
+      <el-table-column label="状态" align="is_used" width="100">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.is_state"
@@ -136,35 +136,43 @@
 
     <!-- 添加或修改标签配置对话框 -->
     <el-dialog v-dialogDrag :title="title" :visible.sync="open" width="500px">
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="名称" prop="tab_name">
+      <el-form
+        ref="form"
+        :model="form"
+        label-width="80px"
+        :rules="saveManageValidator"
+      >
+        <el-form-item label="登录账号" prop="login_name">
           <el-input
-            v-model="form.label"
-            placeholder="请输入管理员名称"
-            :disabled="isEdit"
+            v-model="form.login_name"
+            placeholder="请输入管理员登录账号"
           />
         </el-form-item>
-        <el-form-item label="重置密码" prop="tab_name">
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入管理员名称" />
+        </el-form-item>
+        <el-form-item label="密码" prop="passage">
           <el-input
-            v-model="form.label"
-            placeholder="请输入管理员名称"
-            :disabled="isEdit"
+            v-model="form.passage"
+            placeholder="请输入管理员密码, 为空则不修改，新增默认为:123456"
           />
         </el-form-item>
-        <el-form-item label="角色关联" prop="role_ids">
+        <el-form-item label="角色关联" prop="selectRoleMap">
           <el-select
-            v-model="value2"
+            v-model="form.selectRoleMap"
             multiple
             collapse-tags
-            style="margin-left: 20px;"
-            placeholder="请选择">
+            style="margin-left: 20px"
+            placeholder="请选择"
+          >
             <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+              v-for="item in roleOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
             </el-option>
-        </el-select>
+          </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.is_state">
@@ -186,7 +194,13 @@
 </template>
 
 <script>
-import { getLabel, putLabel, addLabel, delLabel } from "@/api/article/article";
+import {
+  getAdminList,
+  saveAdminData,
+  changeAdminData,
+  delAdminData,
+} from "@/api/manage/admin";
+import { getRoleList } from "@/api/manage/role";
 import { dialogDrag } from "@/utils/directives";
 import c from "@/components/ImgLibrary/c";
 
@@ -210,28 +224,10 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-      // 是否显示弹出层（数据权限）
-      openDataScope: false,
       isEdit: false,
-      // 日期范围
-      dateRange: [],
-      options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        value2: [],
+      // 角色数据
+      roleOptions: [],
+      selectRoleMap: [],
       // 搜索状态数据字典
       statusOptions: [
         {
@@ -268,42 +264,59 @@ export default {
       // 表单参数
       form: {
         is_state: 0,
+        login_name: "",
+        selectRoleMap: "",
+        passage: "",
+        name: "",
       },
-      defaultProps: {
-        children: "children",
-        label: "label",
+      saveManageValidator: {
+        login_name: [
+          { required: true, trigger: "blur", validator: "请输入登录账号！" },
+        ],
+        name: [{ required: true, trigger: "blur", validator: "请输入名字！" }],
       },
     };
   },
   created() {
     this.getList();
+    getRoleList({}).then((roleResponse) => {
+      if (roleResponse.code != 200) {
+        this.roleOptions = [];
+        this.responseMessage(roleResponse);
+      } else {
+        this.roleOptions = roleResponse.data.data;
+      }
+    });
   },
   methods: {
     /** 查询标签列表 */
     getList() {
       this.loading = true;
-      getLabel(this.queryParams).then((response) => {
+      getAdminList(this.queryParams).then((response) => {
+        if (response.code != 200) {
+          this.responseMessage(response);
+          this.tab_list = [];
+          return;
+        }
+        response.data.data.forEach((item, key) => {
+          let roleData = [];
+          item.AdminRoleMap.forEach((itemRole) => {
+            roleData.push(itemRole.RoleData.name);
+          });
+          response.data.data[key]["roleJoin"] = roleData.join(",");
+          response.data.data[key]["is_state"] = item.is_used;
+        });
+        // AdminRoleMap
         this.loading = false;
         this.total = response.data.total;
-        const tab_list = [];
-        response.data.data.forEach((item, index) => {
-          tab_list[index] = {
-            tab_id: item.id,
-            tab_name: item.label,
-            tab_color: item.color,
-            is_state: item.is_state,
-            operator_name: item.operator_name,
-            created_at: item.created_at,
-          };
-        });
-        this.tab_list = tab_list;
+        this.tab_list = response.data.data;
       });
     },
     // 标签状态修改
     handleStatusChange(row) {
       const text = row.is_state == 1 ? "启用" : "停用";
       this.$confirm(
-        '确认要"' + text + '""' + row.tab_name + '"标签吗?',
+        '确认要"' + text + '""' + row.login_name + '"管理员吗?',
         "警告",
         {
           confirmButtonText: "确定",
@@ -312,11 +325,11 @@ export default {
         }
       )
         .then(function () {
-          putLabel({
-            label: row.tab_name,
-            color: row.tab_color,
+          changeAdminData({
+            login_name: row.login_name,
+            name: row.name,
             is_state: row.is_state,
-            id: row.tab_id,
+            id: row.id,
           });
         })
         .catch(function () {
@@ -330,15 +343,16 @@ export default {
     },
     // 取消按钮（数据权限）
     cancelDataScope() {
-      this.openDataScope = false;
       this.reset();
     },
     // 表单重置
     reset() {
       this.form = {
-        label: "",
-        color: "",
-        is_state: -1,
+        is_state: 0,
+        login_name: "",
+        selectRoleMap: "",
+        passage: "",
+        name: "",
       };
     },
     /** 搜索按钮操作 */
@@ -350,76 +364,102 @@ export default {
     resetQuery() {
       this.queryParams.page = 1;
       this.queryParams.page_size = 10;
-      this.queryParams.label = "";
+      this.queryParams.login_name = "";
       this.queryParams.is_state = -1;
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.tab_id);
+      this.ids = selection.map((item) => item.id);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    async handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加标签";
+      this.title = "添加管理员";
       this.isEdit = false;
       this.form.is_state = 1;
+      this.selectRoleMap = [1];
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    async handleUpdate(row) {
       this.reset();
-      const tabIds = row.tab_id || this.ids[0];
-      getLabel({ id: tabIds, is_state: -1 }).then((response) => {
-        this.form.label = response.data.data[0].label;
-        this.form.is_state = response.data.data[0].is_state;
-        this.form.color = response.data.data[0].color;
-        this.form.id = response.data.data[0].id;
+      const tabIds = row.id || this.ids[0];
+      console.log("tabIds", tabIds);
+      getAdminList({ id: tabIds, is_state: -1 }).then((response) => {
+        if (response.code != 200) {
+          this.responseMessage(response);
+          return;
+        }
+        this.form.id = response.data.data[0]["id"];
+        this.form.is_state = response.data.data[0]["is_used"];
+        this.form.login_name = response.data.data[0]["login_name"];
+        this.form.passage = "";
+        this.form.name = response.data.data[0]["name"];
+        let roleIds = [];
+        response.data.data[0].AdminRoleMap.forEach((item) => {
+          if (item.r_id != 0) {
+            roleIds.push(item.r_id);
+          }
+        });
+        this.form.selectRoleMap = roleIds;
+        this.open = true;
+        this.title = "修改管理员";
       });
-      this.open = true;
-      this.title = "修改标签";
-      this.isEdit = false;
       //   })
     },
     /** 提交按钮 */
     submitForm: function () {
       let requestHeader = "";
+      console.log("this.form", this.form);
+      let formMap = this.form;
+      if (
+        formMap.login_name.trim == "" ||
+        formMap.name.trim == "" ||
+        formMap.selectRoleMap.length == 0
+      ) {
+        this.msgError("请填写完整数据");
+        return;
+      }
+      formMap["admin_role_form"] = formMap.selectRoleMap.join(",");
       if (this.form.id !== undefined) {
-        requestHeader = putLabel(this.form);
+        requestHeader = changeAdminData(formMap);
       } else {
-        requestHeader = addLabel(this.form);
+        requestHeader = saveAdminData(formMap);
       }
       requestHeader.then((response) => {
         if (response.code == 200) {
           this.open = false;
-            this.msgSuccess(response.msg)
-          } else {
-            this.msgError(response.msg)
         }
+        this.responseMessage(response);
         this.getList();
       });
     },
 
     /** 删除按钮操作 */
     handleDelete(row) {
-      const tab_ids = row.tab_id || this.ids;
-      let text = ""
-      if (row.tab_name != undefined) {
-        text = ": " + row.tab_name
+      let tab_ids = row.id || this.ids;
+      let text = "";
+      if (row != "") {
+        if (row.login_name != undefined) {
+          text = ": " + row.login_name;
+        }
+        if (row.id != undefined) {
+        tab_ids = [row.id]
+        }
       }
-      this.$confirm('是否确认删除标签' + text + ' ?', '警告', {
+      this.$confirm("是否确认删除管理员" + text + " ?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(function () {
-          delLabel({
-            id: tab_ids.join(","),
+          delAdminData({
+            "id": tab_ids.join(","),
           }).then((response) => {
-            // console.log(response.data);
-            this.responseMessage(response)
+            this.responseMessage(response);
           });
         })
         .then(() => {

@@ -25,7 +25,7 @@ const adminMethod =
         },
         {
           path: '/menu',
-          component: () => import('@/views/menu/index'),
+          component: () => import('@/views/admin/menu'),
           name: 'menu',
           meta: { title: '菜单列表' },
         }
