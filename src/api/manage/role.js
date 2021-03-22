@@ -8,7 +8,7 @@ export function getRoleList(data) {
   return request({
     url: ApiUrl.roleApi,
     method: 'get',
-    param: data
+    params: data
   })
 }
 
@@ -35,7 +35,17 @@ export function delRoleData(data) {
     return request({
       url: ApiUrl.roleApi,
       method: 'delete',
-      data
+      params: data
     })
 }
   
+// 保存用户
+export function roleMenuData(data) {
+  return request({
+    url: ApiUrl.roleMenuApi,
+    method: 'post',
+    data
+  })
+}
+
+

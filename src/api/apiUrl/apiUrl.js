@@ -48,5 +48,6 @@ export const ApiUrl = {
   // manage user
   adminApi: 'api/blog/v1/manage/manage', // 获取管理员的数据
   roleApi: 'api/blog/v1/manage/role', // 获取角色的数据
+  roleMenuApi: 'api/blog/v1/manage/roleMenu', // 获取角色菜单数据
   menuApi: 'api/blog/v1/manage/menu', // 获取菜单的数据
 }

@@ -8,7 +8,7 @@ export function getMenuList(data) {
   return request({
     url: ApiUrl.menuApi,
     method: 'get',
-    param: data
+    params: data
   })
 }
 
@@ -34,7 +34,7 @@ export function delMenuData(data) {
     return request({
       url: ApiUrl.menuApi,
       method: 'delete',
-      data
+      params: data
     })
 }
   
