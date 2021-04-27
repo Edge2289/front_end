@@ -85,8 +85,8 @@ export default {
       //  新做
       codeUrl: '',
       loginForm: {
-        username: '1131191695@qq.com',
-        password: '123456',
+        username: '',
+        password: '',
         uuid: '', // 验证码归属id
         code: '' // 验证码
       },
